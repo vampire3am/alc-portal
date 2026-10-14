@@ -1,9 +1,8 @@
 import React, { useState } from 'react';
 import { useAuth } from './AuthContext';
-import { ProgramId } from './types';
+import { ProgramId, GermanLevel } from './types';
 import { PROGRAMS } from './programData';
 import { 
-  GraduationCap, 
   ArrowRight, 
   CheckCircle2, 
   AlertCircle, 
@@ -13,7 +12,6 @@ import {
   Phone, 
   User, 
   ChevronRight,
-  BookOpen,
   Sparkles,
   Info
 } from 'lucide-react';
@@ -38,6 +36,7 @@ export const AuthView: React.FC<AuthViewProps> = ({ onLoginSuccess }) => {
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [selectedProgram, setSelectedProgram] = useState<ProgramId | null>(null);
+  const [selectedGermanLevel, setSelectedGermanLevel] = useState<GermanLevel>('A1');
   const [showConfirmationStep, setShowConfirmationStep] = useState(false);
   const [registerError, setRegisterError] = useState('');
 
@@ -116,6 +115,7 @@ export const AuthView: React.FC<AuthViewProps> = ({ onLoginSuccess }) => {
       email,
       phone,
       assignedProgram: selectedProgram,
+      germanLevel: selectedProgram === 'GERMAN' ? selectedGermanLevel : undefined,
     });
 
     if (!res.success) {
@@ -140,7 +140,7 @@ export const AuthView: React.FC<AuthViewProps> = ({ onLoginSuccess }) => {
                 AECS Learning Center
               </div>
               <div className="text-xs text-slate-500 font-medium">
-                Student Preparation & Practice Portal
+                Student Preparation &amp; Practice Portal
               </div>
             </div>
           </div>
@@ -270,15 +270,19 @@ export const AuthView: React.FC<AuthViewProps> = ({ onLoginSuccess }) => {
             <div className="md:col-span-5 bg-white p-6 rounded-xl border border-slate-200 shadow-sm space-y-4">
               <div className="flex items-center gap-2 text-xs font-semibold text-[#0F172A] pb-2 border-b border-slate-100">
                 <Sparkles className="w-4 h-4 text-[#EA580C]" />
-                <span>Instant Demo: Test Program Isolation</span>
+                <span>Test Program &amp; Level Isolation</span>
               </div>
               <p className="text-xs text-slate-500 leading-relaxed">
-                Click any registered sample student below to verify that the portal completely isolates their content, navigation, and practice areas:
+                Log in as any of the enrolled students below to verify strict isolation (e.g. A1 learners cannot view B1 materials, and IELTS students cannot view German or PTE):
               </p>
 
               <div className="space-y-2.5 pt-1">
                 {users.map((u) => {
                   const prog = PROGRAMS[u.assignedProgram];
+                  const label = u.assignedProgram === 'GERMAN' 
+                    ? `German ${u.germanLevel || 'A1'}` 
+                    : prog?.name || u.assignedProgram;
+
                   return (
                     <button
                       key={u.id}
@@ -295,10 +299,10 @@ export const AuthView: React.FC<AuthViewProps> = ({ onLoginSuccess }) => {
                       </div>
                       <div className="text-right">
                         <span className="inline-block text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded bg-slate-100 text-[#0F172A] border border-slate-200">
-                          {prog?.name || u.assignedProgram}
+                          {label}
                         </span>
                         <div className="text-[10px] text-slate-400 mt-0.5">
-                          Isolated Portal &rarr;
+                          Isolated Scope &rarr;
                         </div>
                       </div>
                     </button>
@@ -309,7 +313,7 @@ export const AuthView: React.FC<AuthViewProps> = ({ onLoginSuccess }) => {
               <div className="p-3 rounded-lg bg-slate-50 border border-slate-200 text-[11px] text-slate-600 flex items-start gap-2">
                 <Info className="w-4 h-4 text-slate-500 shrink-0 mt-0.5" />
                 <span>
-                  According to the Brief, once logged in, a student cannot switch programs or view any links/resources of another program.
+                  Rule: An A1 student never sees A2/B1/B2 exercises, cards, or mock tests. Level progression is strictly managed via the Administrator Desk.
                 </span>
               </div>
             </div>
@@ -349,7 +353,7 @@ export const AuthView: React.FC<AuthViewProps> = ({ onLoginSuccess }) => {
                       type="text"
                       value={fullName}
                       onChange={(e) => setFullName(e.target.value)}
-                      placeholder="e.g. Bipin Nepal"
+                      placeholder="e.g. Sneha Thapa"
                       className="w-full text-xs py-2 px-3 pl-9 rounded-lg border border-slate-300 focus:outline-none focus:ring-2 focus:ring-[#0F172A] text-slate-900"
                       required
                     />
@@ -492,6 +496,39 @@ export const AuthView: React.FC<AuthViewProps> = ({ onLoginSuccess }) => {
                 </div>
               </div>
 
+              {/* CEFR Level Selection for German Language (Section 1 of German Brief) */}
+              {selectedProgram === 'GERMAN' && (
+                <div className="p-4 bg-orange-50/40 rounded-xl border border-orange-200 space-y-2 animate-in fade-in duration-150">
+                  <div className="flex items-center justify-between">
+                    <label className="text-xs font-bold text-[#0F172A] uppercase tracking-wider">
+                      Initial Enrolled CEFR Level *
+                    </label>
+                    <span className="text-[11px] text-[#EA580C] font-semibold">
+                      Strict Level Isolation Active
+                    </span>
+                  </div>
+                  <p className="text-[11px] text-slate-600">
+                    German learners are assigned both Program = German and Current Level (A1, A2, B1, B2). You will exclusively receive materials belonging to this level.
+                  </p>
+                  <div className="grid grid-cols-4 gap-2 pt-1">
+                    {(['A1', 'A2', 'B1', 'B2'] as GermanLevel[]).map((lvl) => (
+                      <button
+                        key={lvl}
+                        type="button"
+                        onClick={() => setSelectedGermanLevel(lvl)}
+                        className={`py-2 px-3 rounded-lg text-xs font-bold transition-all border ${
+                          selectedGermanLevel === lvl
+                            ? 'bg-[#0F172A] text-white border-[#0F172A] shadow-xs'
+                            : 'bg-white text-slate-700 border-slate-200 hover:bg-slate-50'
+                        }`}
+                      >
+                        {lvl}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
+
               <div className="pt-2 flex items-center justify-between">
                 <button
                   type="button"
@@ -505,7 +542,7 @@ export const AuthView: React.FC<AuthViewProps> = ({ onLoginSuccess }) => {
                   type="submit"
                   className="py-2.5 px-6 bg-[#EA580C] hover:bg-[#C2410C] text-white text-xs font-semibold rounded-lg transition-colors flex items-center gap-2 shadow-sm"
                 >
-                  <span>Review & Confirm Program</span>
+                  <span>Review &amp; Confirm Program</span>
                   <ChevronRight className="w-4 h-4" />
                 </button>
               </div>
@@ -513,7 +550,7 @@ export const AuthView: React.FC<AuthViewProps> = ({ onLoginSuccess }) => {
           </div>
         )}
 
-        {/* Step 3: Program Confirmation State (Explicit requirement from Brief) */}
+        {/* Step 3: Program Confirmation State */}
         {mode === 'register' && showConfirmationStep && selectedProgram && (
           <div className="max-w-xl mx-auto w-full bg-white p-7 rounded-xl border border-slate-200 shadow-sm text-center">
             <div className="w-12 h-12 bg-orange-100 text-[#EA580C] rounded-full flex items-center justify-center mx-auto mb-4">
@@ -524,13 +561,13 @@ export const AuthView: React.FC<AuthViewProps> = ({ onLoginSuccess }) => {
               Step 3: Program Confirmation
             </span>
 
-            {/* Exact requirement line from OCR / PDF brief: "You are registering for: [PROGRAM]" */}
+            {/* Exact requirement line from Brief */}
             <h2 className="text-2xl font-bold text-[#0F172A] mt-2 mb-1">
-              You are registering for: {PROGRAMS[selectedProgram].name}
+              You are registering for: {PROGRAMS[selectedProgram].name} {selectedProgram === 'GERMAN' ? `(${selectedGermanLevel})` : ''}
             </h2>
 
             <p className="text-xs text-slate-500 max-w-md mx-auto mb-6">
-              Please verify your selected learning program. After registration, your student portal and practice areas will be exclusively isolated to {PROGRAMS[selectedProgram].name}.
+              Please verify your selected learning program. After registration, your student portal and practice areas will be exclusively isolated to this scope.
             </p>
 
             <div className="bg-slate-50 p-4 rounded-xl border border-slate-200 text-left mb-6 space-y-2 text-xs">
@@ -546,6 +583,12 @@ export const AuthView: React.FC<AuthViewProps> = ({ onLoginSuccess }) => {
                 <span className="text-slate-500">Phone Number:</span>
                 <span className="font-semibold text-[#0F172A]">{phone}</span>
               </div>
+              {selectedProgram === 'GERMAN' && (
+                <div className="flex justify-between py-1 border-b border-slate-200/60">
+                  <span className="text-slate-500">Enrolled CEFR Level:</span>
+                  <span className="font-bold text-[#0F172A]">{selectedGermanLevel} (Isolated)</span>
+                </div>
+              )}
               <div className="flex justify-between py-1">
                 <span className="text-slate-500">Assigned Portal Scope:</span>
                 <span className="font-bold text-[#EA580C]">
@@ -568,7 +611,7 @@ export const AuthView: React.FC<AuthViewProps> = ({ onLoginSuccess }) => {
                 onClick={handleFinalRegister}
                 className="py-2.5 px-6 bg-[#0F172A] hover:bg-slate-800 text-white text-xs font-semibold rounded-lg transition-colors flex items-center gap-2 shadow-sm"
               >
-                <span>Confirm & Create Account</span>
+                <span>Confirm &amp; Create Account</span>
                 <CheckCircle2 className="w-4 h-4 text-green-400" />
               </button>
             </div>
@@ -646,7 +689,7 @@ export const AuthView: React.FC<AuthViewProps> = ({ onLoginSuccess }) => {
 
       {/* Footer */}
       <footer className="border-t border-slate-200 py-4 px-6 text-center text-xs text-slate-500 bg-white">
-        AECS Learning Center (ALC) &bull; Initial Workflow &amp; Interface Brief &bull; Student Registration &amp; Program Isolation
+        AECS Learning Center (ALC) &bull; Student Registration &amp; Strict CEFR Level Isolation Architecture
       </footer>
     </div>
   );

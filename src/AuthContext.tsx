@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { UserAccount, ProgramId } from './types';
+import { UserAccount, ProgramId, GermanLevel } from './types';
 
 interface AuthContextType {
   currentUser: UserAccount | null;
@@ -10,19 +10,20 @@ interface AuthContextType {
     email: string;
     phone: string;
     assignedProgram: ProgramId;
+    germanLevel?: GermanLevel;
   }) => { success: boolean; error?: string };
   logout: () => void;
-  adminUpdateStudentProgram: (userId: string, newProgram: ProgramId) => void;
+  adminUpdateStudentProgram: (userId: string, newProgram: ProgramId, newLevel?: GermanLevel) => void;
   allPrograms: ProgramId[];
 }
 
-const STORAGE_KEY = 'alc_portal_users';
-const CURRENT_USER_KEY = 'alc_portal_active_user';
+const STORAGE_KEY = 'alc_portal_users_v2';
+const CURRENT_USER_KEY = 'alc_portal_active_user_v2';
 
-// Default initial accounts for demonstration & testing
+// Realistic sample students aligned with the brief
 const DEFAULT_USERS: UserAccount[] = [
   {
-    id: 'user-ielts-1',
+    id: 'student-ielts-1',
     fullName: 'Aarav Sharma',
     email: 'aarav@example.com',
     phone: '+977 9841234567',
@@ -31,30 +32,41 @@ const DEFAULT_USERS: UserAccount[] = [
     role: 'student',
   },
   {
-    id: 'user-pte-1',
+    id: 'student-german-a1',
+    fullName: 'Sneha Thapa',
+    email: 'sneha@example.com',
+    phone: '+977 9851234567',
+    assignedProgram: 'GERMAN',
+    germanLevel: 'A1',
+    registrationDate: '2026-10-10',
+    role: 'student',
+  },
+  {
+    id: 'student-german-b1',
+    fullName: 'Lukas Meyer',
+    email: 'lukas@example.com',
+    phone: '+977 9801234567',
+    assignedProgram: 'GERMAN',
+    germanLevel: 'B1',
+    registrationDate: '2026-10-12',
+    role: 'student',
+  },
+  {
+    id: 'student-pte-1',
     fullName: 'Priya Shrestha',
     email: 'priya@example.com',
-    phone: '+977 9801234567',
+    phone: '+977 9801987654',
     assignedProgram: 'PTE',
     registrationDate: '2026-10-04',
     role: 'student',
   },
   {
-    id: 'user-det-1',
+    id: 'student-det-1',
     fullName: 'Rohan Adhikari',
     email: 'rohan@example.com',
     phone: '+977 9812345678',
     assignedProgram: 'DET',
     registrationDate: '2026-10-08',
-    role: 'student',
-  },
-  {
-    id: 'user-german-1',
-    fullName: 'Sneha Thapa',
-    email: 'sneha@example.com',
-    phone: '+977 9851234567',
-    assignedProgram: 'GERMAN',
-    registrationDate: '2026-10-10',
     role: 'student',
   },
 ];
@@ -115,6 +127,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     email: string;
     phone: string;
     assignedProgram: ProgramId;
+    germanLevel?: GermanLevel;
   }) => {
     const existing = users.find(
       (u) =>
@@ -135,6 +148,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       email: data.email.trim().toLowerCase(),
       phone: data.phone.trim(),
       assignedProgram: data.assignedProgram,
+      germanLevel: data.assignedProgram === 'GERMAN' ? (data.germanLevel || 'A1') : undefined,
       registrationDate: new Date().toISOString().split('T')[0],
       role: 'student',
     };
@@ -148,15 +162,28 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     setCurrentUser(null);
   };
 
-  const adminUpdateStudentProgram = (userId: string, newProgram: ProgramId) => {
+  // Administrator capability to progress student level or update program (Section 1 & 11)
+  const adminUpdateStudentProgram = (userId: string, newProgram: ProgramId, newLevel?: GermanLevel) => {
     setUsers((prev) =>
-      prev.map((u) => (u.id === userId ? { ...u, assignedProgram: newProgram } : u))
+      prev.map((u) => {
+        if (u.id === userId) {
+          return {
+            ...u,
+            assignedProgram: newProgram,
+            germanLevel: newProgram === 'GERMAN' ? (newLevel || u.germanLevel || 'A1') : undefined,
+          };
+        }
+        return u;
+      })
     );
 
-    // If current logged-in user is updated, keep their state synchronized
     setCurrentUser((curr) => {
       if (curr && curr.id === userId) {
-        return { ...curr, assignedProgram: newProgram };
+        return {
+          ...curr,
+          assignedProgram: newProgram,
+          germanLevel: newProgram === 'GERMAN' ? (newLevel || curr.germanLevel || 'A1') : undefined,
+        };
       }
       return curr;
     });

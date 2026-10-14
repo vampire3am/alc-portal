@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { useAuth } from './AuthContext';
-import { ProgramId } from './types';
+import { ProgramId, GermanLevel } from './types';
 import { PROGRAMS } from './programData';
-import { ShieldCheck, X, Check, AlertTriangle, Users } from 'lucide-react';
+import { ShieldCheck, X, Check, AlertTriangle } from 'lucide-react';
 
 interface AdminModalProps {
   isOpen: boolean;
@@ -12,7 +12,8 @@ interface AdminModalProps {
 export const AdminModal: React.FC<AdminModalProps> = ({ isOpen, onClose }) => {
   const { users, currentUser, adminUpdateStudentProgram } = useAuth();
   const [selectedStudentId, setSelectedStudentId] = useState<string>(currentUser?.id || users[0]?.id || '');
-  const [targetProgram, setTargetProgram] = useState<ProgramId>('IELTS');
+  const [targetProgram, setTargetProgram] = useState<ProgramId>('GERMAN');
+  const [targetLevel, setTargetLevel] = useState<GermanLevel>('A1');
   const [notification, setNotification] = useState<string | null>(null);
 
   if (!isOpen) return null;
@@ -21,9 +22,13 @@ export const AdminModal: React.FC<AdminModalProps> = ({ isOpen, onClose }) => {
 
   const handleUpdate = () => {
     if (!selectedStudentId) return;
-    adminUpdateStudentProgram(selectedStudentId, targetProgram);
+    adminUpdateStudentProgram(
+      selectedStudentId, 
+      targetProgram, 
+      targetProgram === 'GERMAN' ? targetLevel : undefined
+    );
     setNotification(
-      `Updated ${currentSelectedStudent?.fullName}'s assigned program to ${PROGRAMS[targetProgram].name}.`
+      `Updated ${currentSelectedStudent?.fullName}'s assignment: Program = ${PROGRAMS[targetProgram].name}${targetProgram === 'GERMAN' ? `, Level = ${targetLevel}` : ''}.`
     );
     setTimeout(() => {
       setNotification(null);
@@ -31,6 +36,7 @@ export const AdminModal: React.FC<AdminModalProps> = ({ isOpen, onClose }) => {
   };
 
   const programs: ProgramId[] = ['IELTS', 'PTE', 'DET', 'GERMAN'];
+  const levels: GermanLevel[] = ['A1', 'A2', 'B1', 'B2'];
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs">
@@ -43,10 +49,10 @@ export const AdminModal: React.FC<AdminModalProps> = ({ isOpen, onClose }) => {
             </div>
             <div>
               <h2 className="text-sm font-bold text-[#0F172A]">
-                Administrator Program Assignment Desk
+                Administrator Program &amp; CEFR Progression Desk
               </h2>
               <p className="text-[11px] text-slate-500">
-                Rule 3: Authorized administrators can correct or change assigned programs
+                Rule 1 &amp; 11: Progress students (A1 &rarr; A2 &rarr; B1 &rarr; B2) or reassign programs
               </p>
             </div>
           </div>
@@ -76,13 +82,16 @@ export const AdminModal: React.FC<AdminModalProps> = ({ isOpen, onClose }) => {
               onChange={(e) => {
                 setSelectedStudentId(e.target.value);
                 const st = users.find((u) => u.id === e.target.value);
-                if (st) setTargetProgram(st.assignedProgram);
+                if (st) {
+                  setTargetProgram(st.assignedProgram);
+                  if (st.germanLevel) setTargetLevel(st.germanLevel);
+                }
               }}
               className="w-full p-2.5 rounded-lg border border-slate-300 bg-white font-medium text-slate-900 focus:outline-none focus:ring-2 focus:ring-[#0F172A]"
             >
               {users.map((u) => (
                 <option key={u.id} value={u.id}>
-                  {u.fullName} ({u.email}) — Currently: {PROGRAMS[u.assignedProgram]?.name || u.assignedProgram}
+                  {u.fullName} ({u.email}) — Currently: {u.assignedProgram === 'GERMAN' ? `German ${u.germanLevel || 'A1'}` : PROGRAMS[u.assignedProgram]?.name}
                 </option>
               ))}
             </select>
@@ -96,6 +105,14 @@ export const AdminModal: React.FC<AdminModalProps> = ({ isOpen, onClose }) => {
                   {PROGRAMS[currentSelectedStudent.assignedProgram]?.name}
                 </span>
               </div>
+              {currentSelectedStudent.assignedProgram === 'GERMAN' && (
+                <div className="flex justify-between">
+                  <span className="text-slate-500">Current CEFR Level:</span>
+                  <span className="font-bold text-[#EA580C]">
+                    Level {currentSelectedStudent.germanLevel || 'A1'} (Stored Account Property)
+                  </span>
+                </div>
+              )}
               <div className="flex justify-between">
                 <span className="text-slate-500">Student Phone:</span>
                 <span className="font-semibold text-slate-700">
@@ -107,11 +124,10 @@ export const AdminModal: React.FC<AdminModalProps> = ({ isOpen, onClose }) => {
 
           <div>
             <label className="block font-bold text-slate-700 mb-1.5 uppercase tracking-wider text-[11px]">
-              Reassign to New Program
+              Assigned Program
             </label>
             <div className="grid grid-cols-2 gap-2">
               {programs.map((pId) => {
-                const isCurrent = currentSelectedStudent?.assignedProgram === pId;
                 const isSelected = targetProgram === pId;
                 return (
                   <button
@@ -124,22 +140,45 @@ export const AdminModal: React.FC<AdminModalProps> = ({ isOpen, onClose }) => {
                         : 'border-slate-200 bg-white text-slate-700 hover:bg-slate-50'
                     }`}
                   >
-                    <div className="flex items-center justify-between">
-                      <span className="text-xs">{PROGRAMS[pId].name}</span>
-                      {isCurrent && (
-                        <span className="text-[10px] text-slate-400 font-normal">Current</span>
-                      )}
-                    </div>
+                    <span className="text-xs">{PROGRAMS[pId].name}</span>
                   </button>
                 );
               })}
             </div>
           </div>
 
+          {/* CEFR Level Progression Controls (Section 1 & 11) */}
+          {targetProgram === 'GERMAN' && (
+            <div className="p-3.5 bg-orange-50/40 rounded-xl border border-orange-200 space-y-2">
+              <label className="block font-bold text-[#0F172A] uppercase tracking-wider text-[11px]">
+                Progress or Set German CEFR Level
+              </label>
+              <p className="text-[11px] text-slate-600">
+                Rule (Section 1 &amp; 11): The level is a separate account property so administrators can progress a student from A1 to A2, A2 to B1 without creating a new account.
+              </p>
+              <div className="grid grid-cols-4 gap-2 pt-1">
+                {levels.map((lvl) => (
+                  <button
+                    key={lvl}
+                    type="button"
+                    onClick={() => setTargetLevel(lvl)}
+                    className={`py-2 px-3 rounded-lg text-xs font-bold transition-all border ${
+                      targetLevel === lvl
+                        ? 'bg-[#0F172A] text-white border-[#0F172A] shadow-xs'
+                        : 'bg-white text-slate-700 border-slate-200 hover:bg-slate-50'
+                    }`}
+                  >
+                    Level {lvl}
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
+
           <div className="p-3 rounded-lg bg-amber-50 border border-amber-200 text-amber-900 text-[11px] flex items-start gap-2">
             <AlertTriangle className="w-4 h-4 text-amber-600 shrink-0 mt-0.5" />
             <span>
-              Once updated, the student portal immediately refreshes with the isolated navigation and materials for the new program. The student themselves has zero controls to switch programs.
+              Students have zero controls to switch programs or advance their level. Level isolation is enforced strictly on backend filters and interface queries.
             </span>
           </div>
         </div>
@@ -156,7 +195,7 @@ export const AdminModal: React.FC<AdminModalProps> = ({ isOpen, onClose }) => {
             onClick={handleUpdate}
             className="px-5 py-2 rounded-lg bg-[#0F172A] hover:bg-slate-800 text-xs font-semibold text-white shadow-xs"
           >
-            Save Assignment Change
+            Save Assignment / Level Progression
           </button>
         </div>
       </div>
