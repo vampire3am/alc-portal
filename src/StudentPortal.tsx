@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { UserAccount, ProgramConfig, ViewTab } from './types';
 import { GermanPortalWorkspace } from './GermanPortalWorkspace';
+import { IeltsPortalWorkspace } from './IeltsPortalWorkspace';
 import { 
   Menu, 
   Bell, 
@@ -121,7 +122,64 @@ export const StudentPortal: React.FC<StudentPortalProps> = ({
     );
   }
 
-  // STANDARD PORTAL SHELL FOR IELTS, PTE, DET (Isolated to their respective learning areas)
+  // If user is enrolled in IELTS, render dedicated computer-delivered simulation workspace
+  if (user.assignedProgram === 'IELTS') {
+    return (
+      <div className="flex-1 flex flex-col min-w-0 bg-[#F8FAFC]">
+        {/* Top Bar */}
+        <header className="bg-white border-b border-slate-200 py-3 px-6 sticky top-0 z-10 flex items-center justify-between">
+          <div className="flex items-center gap-4">
+            <button
+              onClick={onOpenMobileMenu}
+              className="md:hidden p-1.5 rounded-lg text-slate-600 hover:bg-slate-100"
+            >
+              <Menu className="w-5 h-5" />
+            </button>
+
+            <div className="flex items-center gap-2">
+              <span className="font-bold text-[#0F172A] text-sm hidden sm:inline">
+                AECS Learning Center
+              </span>
+              <span className="text-slate-300 hidden sm:inline">/</span>
+              <span className="text-xs font-bold text-[#EA580C] uppercase tracking-wide">
+                IELTS Academic Test Simulation
+              </span>
+            </div>
+          </div>
+
+          <div className="flex items-center gap-3">
+            <div
+              onClick={() => onSelectTab('profile')}
+              className="flex items-center gap-2 pl-3 border-l border-slate-200 cursor-pointer group"
+            >
+              <div className="w-8 h-8 rounded-full bg-[#0F172A] text-white flex items-center justify-center font-bold text-xs uppercase shadow-xs group-hover:ring-2 group-hover:ring-[#EA580C]">
+                {user.fullName.charAt(0)}
+              </div>
+              <div className="hidden sm:block text-left">
+                <div className="text-xs font-bold text-[#0F172A] group-hover:text-[#EA580C] leading-tight">
+                  {user.fullName}
+                </div>
+                <div className="text-[10px] text-slate-400 font-medium">
+                  IELTS Academic (Isolated)
+                </div>
+              </div>
+            </div>
+          </div>
+        </header>
+
+        {/* IELTS Specialized Computer-Delivered Workspace */}
+        <main className="flex-1 p-6 max-w-7xl w-full mx-auto">
+          <IeltsPortalWorkspace
+            user={user}
+            currentTab={currentTab}
+            onSelectTab={onSelectTab}
+          />
+        </main>
+      </div>
+    );
+  }
+
+  // STANDARD PORTAL SHELL FOR PTE, DET (Isolated to their respective learning areas)
   const renderTabContent = () => {
     switch (currentTab) {
       case 'dashboard':

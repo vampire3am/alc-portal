@@ -1,5 +1,6 @@
 export type ProgramId = 'IELTS' | 'PTE' | 'DET' | 'GERMAN';
 export type GermanLevel = 'A1' | 'A2' | 'B1' | 'B2';
+export type IeltsTrack = 'Academic' | 'General Training';
 
 export interface UserAccount {
   id: string;
@@ -7,7 +8,8 @@ export interface UserAccount {
   email: string;
   phone: string;
   assignedProgram: ProgramId;
-  germanLevel?: GermanLevel; // Stored separate account property per Section 1 & 11
+  germanLevel?: GermanLevel;
+  ieltsTrack?: IeltsTrack;
   registrationDate: string;
   role: 'student' | 'admin';
 }
@@ -45,13 +47,80 @@ export interface ProgramConfig {
 
 export type ViewTab = 'dashboard' | 'learn' | 'practice' | 'mock-tests' | 'progress' | 'resources' | 'profile';
 
-// Speaking Types (Guided Practice & Practice modes, recording & replay)
+// ==========================================
+// IELTS WORKSPACE TYPES (ieltsonlinetests.com style)
+// ==========================================
+
+export interface IeltsQuestion {
+  id: number;
+  type: 'multiple_choice' | 'true_false_not_given' | 'yes_no_not_given' | 'matching_headings' | 'summary_completion' | 'sentence_completion';
+  questionText: string;
+  options?: string[];
+  correctAnswer: string;
+  locateSnippet?: string; // Signature "Locate" feature on ieltsonlinetests
+  explanation?: string;   // Signature "Explain" feature on ieltsonlinetests
+}
+
+export interface IeltsReadingPassage {
+  id: string;
+  title: string;
+  subtitle?: string;
+  passageText: string;
+  questions: IeltsQuestion[];
+}
+
+export interface IeltsListeningSection {
+  id: string;
+  sectionNumber: 1 | 2 | 3 | 4;
+  title: string;
+  context: string;
+  audioScenario: string;
+  audioTranscript: string;
+  questions: IeltsQuestion[];
+}
+
+export interface IeltsWritingTask {
+  id: string;
+  taskNumber: 1 | 2;
+  title: string;
+  taskPrompt: string;
+  targetWords: number;
+  recommendedMinutes: number;
+  sampleBand9Response: string;
+  visualChartType?: string;
+  visualChartData?: Array<{ label: string; valueA: number; valueB: number }>;
+}
+
+export interface IeltsSpeakingPart {
+  partNumber: 1 | 2 | 3;
+  title: string;
+  duration: string;
+  prompt: string;
+  cueCardPoints?: string[];
+  prepTimeSeconds?: number;
+  modelAnswer: string;
+  audioHint: string;
+}
+
+export interface IeltsFullMockTest {
+  id: string;
+  title: string;
+  track: IeltsTrack;
+  yearEdition: string;
+  totalQuestions: number;
+  listening: IeltsListeningSection[];
+  reading: IeltsReadingPassage[];
+  writing: IeltsWritingTask[];
+  speaking: IeltsSpeakingPart[];
+}
+
+// German Module Types (Retained)
 export interface SpeakingExercise {
   id: string;
   level: GermanLevel;
   title: string;
   topic: string;
-  focus: string; // e.g. Introductions, Everyday situations
+  focus: string;
   mode: 'guided' | 'practice';
   prompt: string;
   prepTimeSeconds?: number;
@@ -63,7 +132,6 @@ export interface SpeakingExercise {
   };
 }
 
-// Writing Types (formal/informal emails, messages, forum posts, opinion, letters)
 export interface WritingExercise {
   id: string;
   level: GermanLevel;
@@ -76,7 +144,6 @@ export interface WritingExercise {
   contextHint?: string;
 }
 
-// Listening Types (Richtig/Falsch, Multiple Choice, Matching, Wer sagt was?)
 export interface ListeningExercise {
   id: string;
   level: GermanLevel;
@@ -89,12 +156,10 @@ export interface ListeningExercise {
     id: string;
     questionText: string;
     options?: string[];
-    matchingPairs?: Array<{ speakerOrItem: string; statementOrMatch: string }>;
     correctAnswer: string;
   }>;
 }
 
-// Reading Types (Notices, messages, emails, articles)
 export interface ReadingExercise {
   id: string;
   level: GermanLevel;
@@ -111,7 +176,6 @@ export interface ReadingExercise {
   }>;
 }
 
-// Vocabulary Types (Structured noun article, plural, meaning, example, audio, revision cards)
 export interface VocabularyItem {
   id: string;
   level: GermanLevel;
@@ -124,7 +188,6 @@ export interface VocabularyItem {
   exampleTranslation?: string;
 }
 
-// Grammar Types (Dedicated module per level with lessons, examples, exercises)
 export interface GrammarTopic {
   id: string;
   level: GermanLevel;
@@ -140,7 +203,6 @@ export interface GrammarTopic {
   }>;
 }
 
-// Mock Test Types (Level-specific practice tests)
 export interface MockTestItem {
   id: string;
   level: GermanLevel;
