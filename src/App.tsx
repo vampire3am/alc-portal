@@ -7,12 +7,23 @@ import type { ViewTab } from './types';
 import { PROGRAMS } from './programData';
 
 const PortalApp: React.FC = () => {
-  const { currentUser, logout } = useAuth();
+  const { currentUser, isLoading, logout } = useAuth();
   const [currentTab, setCurrentTab] = useState<ViewTab>('dashboard');
   const [isMobileOpen, setIsMobileOpen] = useState(false);
 
+  if (isLoading) {
+    return (
+      <div className="grid min-h-screen place-items-center bg-[var(--color-paper)] px-4">
+        <div className="text-center" role="status">
+          <div className="mx-auto grid h-12 w-12 place-items-center rounded-lg bg-[var(--color-ink)] font-display text-sm font-bold text-white">ALC</div>
+          <p className="mt-4 text-sm font-medium text-[var(--color-muted)]">Loading your workspace…</p>
+        </div>
+      </div>
+    );
+  }
+
   if (!currentUser) {
-    return <AuthView onLoginSuccess={() => setCurrentTab('dashboard')} />;
+    return <AuthView />;
   }
 
   const assignedConfig = PROGRAMS[currentUser.assignedProgram];
@@ -23,8 +34,8 @@ const PortalApp: React.FC = () => {
         currentTab={currentTab}
         onSelectTab={setCurrentTab}
         programName={assignedConfig.name}
-        onLogout={() => {
-          logout();
+        onLogout={async () => {
+          await logout();
           window.scrollTo({ top: 0, left: 0 });
         }}
         isMobileOpen={isMobileOpen}

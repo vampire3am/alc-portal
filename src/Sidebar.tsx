@@ -87,7 +87,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
         <div className="text-xs font-medium text-white/60">Assigned workspace</div>
         <div className="mt-1 flex items-center justify-between gap-2">
           <span className="font-display text-sm font-semibold text-white">{programName}</span>
-          <span className="rounded-full border border-white/15 px-2 py-1 text-xs text-white/70">Demo</span>
+          <span className="rounded-full border border-white/15 px-2 py-1 text-xs text-white/70">Enrolled</span>
         </div>
       </div>
 
@@ -124,7 +124,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
           className="flex min-h-11 w-full items-center gap-3 rounded-lg px-3 text-sm font-medium text-white/70 transition-colors hover:bg-white/8 hover:text-white"
         >
           <LogOut className="h-4 w-4" aria-hidden="true" />
-          Exit demo
+          Sign out
         </button>
       </div>
     </div>

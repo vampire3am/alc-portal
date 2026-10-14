@@ -138,12 +138,12 @@ export const IeltsPortalWorkspace: React.FC<IeltsPortalWorkspaceProps> = ({
       <div className="space-y-8">
         <section className="alc-panel grid gap-8 p-6 sm:p-8 lg:grid-cols-[minmax(0,1.35fr)_minmax(17rem,0.65fr)]">
           <div>
-            <p className="alc-label">IELTS Academic · public preview</p>
+            <p className="alc-label">IELTS Academic preparation</p>
             <h1 className="mt-3 max-w-3xl text-3xl font-semibold tracking-[-0.04em] text-[var(--color-ink)] sm:text-5xl">
               Practice the interface before test day.
             </h1>
             <p className="mt-4 max-w-2xl text-sm leading-6 text-[var(--color-muted)]">
-              Explore sample reading, listening, writing, and speaking activities. This is an independent demonstration—not an official IELTS test or scoring service.
+              Build familiarity across reading, listening, writing, and speaking with focused computer-delivered practice.
             </p>
             <button type="button" className="alc-button-primary mt-7" onClick={() => onSelectTab('practice')}>
               Open practice <ArrowRight className="h-4 w-4" aria-hidden="true" />
@@ -155,7 +155,7 @@ export const IeltsPortalWorkspace: React.FC<IeltsPortalWorkspaceProps> = ({
               <dd className="mt-1 font-semibold text-[var(--color-ink)]">{user.ieltsTrack ?? 'Academic'}</dd>
             </div>
             <div>
-              <dt className="text-xs text-[var(--color-muted)]">Sample test</dt>
+              <dt className="text-xs text-[var(--color-muted)]">Practice set</dt>
               <dd className="mt-1 font-semibold text-[var(--color-ink)]">{activeTest.yearEdition}</dd>
             </div>
           </dl>
@@ -165,7 +165,7 @@ export const IeltsPortalWorkspace: React.FC<IeltsPortalWorkspaceProps> = ({
           <div className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
             {[
               ['reading', 'Reading', 'Passage and question split view', BookOpen],
-              ['listening', 'Listening', 'Browser speech audio preview', Headphones],
+              ['listening', 'Listening', 'Audio-led comprehension practice', Headphones],
               ['writing', 'Writing', 'Prompt and live word count', FileText],
               ['speaking', 'Speaking', 'Local microphone recorder', Mic],
             ].map(([id, label, copy, Icon]) => {
@@ -214,7 +214,7 @@ export const IeltsPortalWorkspace: React.FC<IeltsPortalWorkspaceProps> = ({
   if (currentTab === 'progress') {
     return (
       <div className="space-y-7">
-        {intro('Demo progress', 'Sample performance overview', 'These values illustrate the reporting interface only. No learner record is stored or transmitted.')}
+        {intro('Progress', 'Current practice performance', 'Review the answers completed in your current practice session.')}
         <div className="grid gap-4 sm:grid-cols-3">
           {[['Answered this session', answeredCount], ['Correct this session', correctCount], ['Estimated band', band ?? '—']].map(([label, value]) => (
             <div key={label} className="alc-panel p-5">
@@ -231,13 +231,13 @@ export const IeltsPortalWorkspace: React.FC<IeltsPortalWorkspaceProps> = ({
   if (currentTab === 'resources') {
     return (
       <div className="space-y-7">
-        {intro('Reference library', 'IELTS preparation resources', 'Independent study references for this prototype. Official policy and test information should be verified with an authorized IELTS provider.')}
+        {intro('Reference library', 'IELTS preparation resources', 'Study guides for use alongside lessons and assigned practice. Verify official test policy with an authorized IELTS provider.')}
         <div className="alc-panel divide-y divide-[var(--color-line)]">
           {['Computer-delivered test orientation', 'Writing task checklist', 'Speaking cue-card planner'].map((item) => (
             <div key={item} className="flex items-center gap-4 p-5">
               <Library className="h-5 w-5 text-[var(--color-accent)]" aria-hidden="true" />
               <p className="flex-1 font-semibold text-[var(--color-ink)]">{item}</p>
-              <span className="alc-status hidden sm:inline-flex">Preview</span>
+              <span className="alc-status hidden sm:inline-flex">Guide</span>
             </div>
           ))}
         </div>
@@ -248,9 +248,9 @@ export const IeltsPortalWorkspace: React.FC<IeltsPortalWorkspaceProps> = ({
   if (currentTab === 'profile') {
     return (
       <div className="space-y-7">
-        {intro('Sample profile', user.fullName, 'A fictional learner used to demonstrate the IELTS workspace.')}
+        {intro('Student profile', user.fullName, 'Your account details and IELTS learning pathway.')}
         <dl className="alc-panel max-w-2xl divide-y divide-[var(--color-line)] p-6">
-          {[['Email', user.email], ['Track', user.ieltsTrack ?? 'Academic'], ['Account type', 'Fictional demo profile']].map(([label, value]) => (
+          {[['Email', user.email], ['Track', user.ieltsTrack ?? 'Academic'], ['Account type', 'Enrolled student']].map(([label, value]) => (
             <div key={label} className="grid gap-1 py-4 sm:grid-cols-[10rem_1fr]">
               <dt className="text-sm text-[var(--color-muted)]">{label}</dt>
               <dd className="text-sm font-semibold text-[var(--color-ink)]">{value}</dd>
@@ -329,7 +329,7 @@ export const IeltsPortalWorkspace: React.FC<IeltsPortalWorkspaceProps> = ({
       {submitted && band !== null && (
         <div className="alc-panel border-emerald-300 bg-emerald-50 p-5" role="status">
           <p className="font-semibold text-emerald-950">Practice estimate: band {band}</p>
-          <p className="mt-1 text-sm text-emerald-800">{correctCount} correct from {answeredCount} attempted. This estimate covers the sample reading/listening items only and is not an official IELTS score.</p>
+          <p className="mt-1 text-sm text-emerald-800">{correctCount} correct from {answeredCount} attempted. This estimate covers these reading/listening practice items only and is not an official IELTS score.</p>
         </div>
       )}
 
@@ -350,9 +350,9 @@ export const IeltsPortalWorkspace: React.FC<IeltsPortalWorkspaceProps> = ({
       {skill === 'listening' && (
         <section className="alc-panel p-5 sm:p-6">
           <div className="flex flex-col gap-4 border-b border-[var(--color-line)] pb-5 sm:flex-row sm:items-center sm:justify-between">
-            <div><p className="alc-label">Listening sample</p><h2 className="mt-2 text-xl font-semibold text-[var(--color-ink)]">{activeTest.listening[0].title}</h2></div>
+            <div><p className="alc-label">Listening practice</p><h2 className="mt-2 text-xl font-semibold text-[var(--color-ink)]">{activeTest.listening[0].title}</h2></div>
             <button type="button" className="alc-button-primary" onClick={() => speak(activeTest.listening[0].audioTranscript)}>
-              <Volume2 className="h-4 w-4" aria-hidden="true" /> Play demo audio
+              <Volume2 className="h-4 w-4" aria-hidden="true" /> Play practice audio
             </button>
           </div>
           <div className="mt-5 grid gap-5 md:grid-cols-2">{activeTest.listening[0].questions.map(renderQuestion)}</div>
@@ -372,7 +372,7 @@ export const IeltsPortalWorkspace: React.FC<IeltsPortalWorkspaceProps> = ({
             Response <span className="font-normal text-[var(--color-muted)]">· {wordCount} / {selectedWritingTask.targetWords} words</span>
           </label>
           <textarea id="ielts-writing" rows={12} value={writingText} onChange={(event) => setWritingText(event.target.value)} className="alc-field mt-2 min-h-64 resize-y leading-6" placeholder="Write your response here…" />
-          <p className="mt-3 text-sm text-[var(--color-muted)]">Writing is not automatically scored in this demo.</p>
+          <p className="mt-3 text-sm text-[var(--color-muted)]">Writing feedback requires instructor review.</p>
         </section>
       )}
 

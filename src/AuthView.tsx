@@ -1,133 +1,208 @@
-import React from 'react';
-import { ArrowRight, BookOpenCheck, ShieldCheck } from 'lucide-react';
+import React, { useState } from 'react';
+import {
+  ArrowRight,
+  BookOpenCheck,
+  Check,
+  FileCheck2,
+  Headphones,
+  ShieldCheck,
+  Target,
+} from 'lucide-react';
 import { useAuth } from './AuthContext';
-import { PROGRAMS } from './programData';
 
-interface AuthViewProps {
-  onLoginSuccess: () => void;
-}
+export const AuthView: React.FC = () => {
+  const { login } = useAuth();
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [formState, setFormState] = useState<'idle' | 'loading' | 'error'>('idle');
+  const [message, setMessage] = useState('');
 
-export const AuthView: React.FC<AuthViewProps> = ({ onLoginSuccess }) => {
-  const { users, selectDemoProfile } = useAuth();
-
-  const openProfile = (userId: string) => {
-    if (selectDemoProfile(userId)) {
-      window.scrollTo({ top: 0, left: 0 });
-      onLoginSuccess();
+  const submit = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    setFormState('loading');
+    setMessage('');
+    const result = await login(email.trim(), password);
+    if (!result.ok) {
+      setMessage(result.message ?? 'Sign-in was unsuccessful.');
+      setFormState('error');
     }
   };
 
   return (
     <div className="min-h-screen bg-[var(--color-paper)] text-[var(--color-ink)]">
-      <header className="border-b border-[var(--color-rule)] bg-[var(--color-surface)]">
-        <div className="mx-auto flex min-h-16 max-w-6xl items-center justify-between px-4 sm:px-6">
-          <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-[var(--color-ink)] font-display text-sm font-bold tracking-wide text-white">
-              ALC
-            </div>
-            <div className="min-w-0">
-              <div className="whitespace-nowrap font-display text-sm font-semibold tracking-tight sm:text-base">
-                <span className="sm:hidden">AECS</span>
-                <span className="hidden sm:inline">AECS Learning Center</span>
-              </div>
-              <div className="hidden text-sm text-[var(--color-muted)] sm:block">Preparation workspace</div>
-            </div>
-          </div>
-          <span className="alc-chip">
-            <span className="sm:hidden">Demo</span>
-            <span className="hidden sm:inline">Interactive demo</span>
-          </span>
+      <header className="sticky top-0 z-30 border-b border-[var(--color-rule)] bg-[color:var(--color-paper)/0.94] backdrop-blur">
+        <div className="mx-auto flex min-h-16 max-w-7xl items-center justify-between gap-4 px-4 sm:px-6">
+          <a href="#top" className="flex min-w-0 items-center gap-3" aria-label="AECS Learning Center home">
+            <span className="grid h-10 w-10 shrink-0 place-items-center rounded-lg bg-[var(--color-ink)] font-display text-sm font-bold text-white">ALC</span>
+            <span className="min-w-0">
+              <span className="block whitespace-nowrap font-display text-sm font-semibold tracking-tight sm:text-base">AECS Learning Center</span>
+              <span className="hidden text-xs text-[var(--color-muted)] sm:block">Language test preparation</span>
+            </span>
+          </a>
+          <a href="#access" className="alc-button-primary px-3 sm:px-4">
+            Sign in <ArrowRight className="h-4 w-4" aria-hidden="true" />
+          </a>
         </div>
       </header>
 
-      <main className="mx-auto grid max-w-6xl gap-10 px-4 py-10 sm:px-6 sm:py-16 lg:grid-cols-[minmax(0,1.05fr)_minmax(22rem,.95fr)] lg:items-start lg:gap-16">
-        <section className="min-w-0 pt-2 lg:sticky lg:top-12" aria-labelledby="entry-heading">
-          <p className="alc-label">Student preparation, clearly scoped</p>
-          <h1
-            id="entry-heading"
-            className="mt-4 max-w-[12ch] text-[clamp(2.75rem,7vw,5rem)] font-semibold leading-[.98] tracking-[-.045em]"
-          >
-            Practice inside one focused learning track.
-          </h1>
-          <p className="mt-6 max-w-xl text-base leading-7 text-[var(--color-ink-2)]">
-            Explore IELTS, PTE, Duolingo English Test, and German CEFR workspaces.
-            Each sample profile opens only the curriculum assigned to it.
-          </p>
-
-          <div className="mt-8 grid max-w-xl gap-4 border-t border-[var(--color-rule)] pt-6 sm:grid-cols-2">
-            <div className="flex gap-3">
-              <ShieldCheck className="mt-0.5 h-5 w-5 shrink-0 text-[var(--color-accent)]" aria-hidden="true" />
-              <div>
-                <h2 className="text-base font-semibold">Honest demo boundaries</h2>
-                <p className="mt-1 text-sm leading-6 text-[var(--color-ink-2)]">
-                  No passwords, email delivery, or production accounts are simulated.
-                </p>
+      <main id="top">
+        <section className="border-b border-[var(--color-rule)]">
+          <div className="mx-auto grid max-w-7xl gap-10 px-4 pb-16 pt-12 sm:px-6 sm:pb-28 sm:pt-20 lg:grid-cols-[minmax(0,1.25fr)_minmax(19rem,.75fr)] lg:items-end lg:gap-16">
+            <div>
+              <p className="alc-label">Focused preparation for ambitious learners</p>
+              <h1 className="mt-5 max-w-[14ch] text-[clamp(2.75rem,7vw,5.5rem)] font-semibold leading-[.96] tracking-[-.05em]">
+                Prepare with a plan that fits your exam.
+              </h1>
+              <p className="mt-6 max-w-2xl text-base leading-7 text-[var(--color-ink-2)] sm:text-lg">
+                AECS brings lessons, targeted practice, mock-test workflows, and progress tracking into one focused workspace for every enrolled student.
+              </p>
+              <div className="mt-8 flex flex-wrap gap-3">
+                <a href="#programs" className="alc-button-primary">Explore programs</a>
+                <a href="#access" className="alc-button-secondary">Student sign in</a>
               </div>
             </div>
-            <div className="flex gap-3">
-              <BookOpenCheck className="mt-0.5 h-5 w-5 shrink-0 text-[var(--color-accent)]" aria-hidden="true" />
-              <div>
-                <h2 className="text-base font-semibold">Real interaction patterns</h2>
-                <p className="mt-1 text-sm leading-6 text-[var(--color-ink-2)]">
-                  Try lessons, exercises, timed practice, and responsive navigation.
-                </p>
-              </div>
+            <aside className="border-t border-[var(--color-rule)] pt-6 lg:border-l lg:border-t-0 lg:pl-8 lg:pt-0">
+              <p className="alc-label">One workspace, one goal</p>
+              <ul className="mt-5 space-y-5">
+                {[
+                  ['Assigned learning path', 'See only the curriculum connected to your enrollment.'],
+                  ['Exam-shaped practice', 'Work through activities organized around the test format.'],
+                  ['Progress in context', 'Review attempts and return to the next useful task.'],
+                ].map(([title, copy]) => (
+                  <li key={title} className="flex gap-3">
+                    <Check className="mt-0.5 h-5 w-5 shrink-0 text-[var(--color-accent)]" aria-hidden="true" />
+                    <span>
+                      <span className="block font-semibold text-[var(--color-ink)]">{title}</span>
+                      <span className="mt-1 block text-sm leading-6 text-[var(--color-muted)]">{copy}</span>
+                    </span>
+                  </li>
+                ))}
+              </ul>
+            </aside>
+          </div>
+        </section>
+
+        <section id="programs" className="mx-auto max-w-7xl px-4 py-16 sm:px-6 sm:py-20" aria-labelledby="programs-heading">
+          <div className="max-w-3xl">
+            <p className="alc-label">Programs</p>
+            <h2 id="programs-heading" className="mt-3 text-3xl font-semibold tracking-[-0.035em] sm:text-4xl">A workspace shaped around the exam.</h2>
+            <p className="mt-4 text-base leading-7 text-[var(--color-muted)]">Build the skills, timing, and familiarity required by your chosen pathway.</p>
+          </div>
+          <div className="mt-9 divide-y divide-[var(--color-rule)] border-y border-[var(--color-rule)]">
+            {[
+              ['IELTS', 'Academic and General Training', 'Listening · Reading · Writing · Speaking'],
+              ['PTE Academic', 'Computer-based English proficiency', 'Speaking & writing · Reading · Listening'],
+              ['Duolingo English Test', 'Adaptive English proficiency', 'Literacy · Comprehension · Conversation · Production'],
+              ['German', 'CEFR-aligned language development', 'Vocabulary · Grammar · Lesen · Hören · Schreiben · Sprechen'],
+            ].map(([name, subtitle, areas], index) => (
+              <article key={name} className="grid gap-3 py-6 md:grid-cols-[3rem_minmax(12rem,.65fr)_minmax(0,1fr)] md:items-center md:gap-6">
+                <span className="font-mono text-xs text-[var(--color-muted)]">{String(index + 1).padStart(2, '0')}</span>
+                <div>
+                  <h3 className="text-xl font-semibold text-[var(--color-ink)]">{name}</h3>
+                  <p className="mt-1 text-sm text-[var(--color-muted)]">{subtitle}</p>
+                </div>
+                <p className="text-sm leading-6 text-[var(--color-ink-2)]">{areas}</p>
+              </article>
+            ))}
+          </div>
+        </section>
+
+        <section id="platform" className="border-y border-[var(--color-rule)] bg-[var(--color-surface)]">
+          <div className="mx-auto grid max-w-7xl gap-10 px-4 py-16 sm:px-6 sm:py-20 lg:grid-cols-[minmax(17rem,.7fr)_minmax(0,1.3fr)] lg:gap-16">
+            <div>
+              <h2 className="text-3xl font-semibold tracking-[-0.035em] sm:text-4xl">Less switching. More deliberate practice.</h2>
+              <p className="mt-4 text-base leading-7 text-[var(--color-muted)]">The student workspace keeps curriculum, practice, assessment, and progress together without burying the next action.</p>
+            </div>
+            <div className="divide-y divide-[var(--color-rule)] border-y border-[var(--color-rule)]">
+              {[
+                [BookOpenCheck, 'Structured learning', 'Move from concepts and worked examples into level-appropriate exercises.'],
+                [Target, 'Targeted practice', 'Choose the skill that needs attention instead of repeating an entire course.'],
+                [FileCheck2, 'Assessment workflow', 'Use timed interfaces built around reading, listening, writing, and speaking tasks.'],
+                [ShieldCheck, 'Account-based access', 'Enrollment and program scope are designed to be enforced by the connected account service.'],
+              ].map(([Icon, title, copy]) => {
+                const FeatureIcon = Icon as typeof BookOpenCheck;
+                return (
+                  <article key={title as string} className="grid gap-4 py-6 sm:grid-cols-[2.5rem_minmax(0,1fr)]">
+                    <FeatureIcon className="h-5 w-5 text-[var(--color-accent)]" aria-hidden="true" />
+                    <div>
+                      <h3 className="text-lg font-semibold text-[var(--color-ink)]">{title as string}</h3>
+                      <p className="mt-2 text-sm leading-6 text-[var(--color-muted)]">{copy as string}</p>
+                    </div>
+                  </article>
+                );
+              })}
             </div>
           </div>
         </section>
 
-        <section className="alc-panel p-5 sm:p-6" aria-labelledby="profiles-heading">
-          <div className="border-b border-[var(--color-rule)] pb-5">
-            <p className="alc-label">Demo access</p>
-            <h2 id="profiles-heading" className="mt-2 text-2xl font-semibold">
-              Choose a sample student
-            </h2>
-            <p className="mt-2 text-sm leading-6 text-[var(--color-ink-2)]">
-              Profiles are fictional and reset with the browser session.
+        <section id="access" className="mx-auto grid max-w-7xl gap-10 px-4 py-16 sm:px-6 sm:py-20 lg:grid-cols-[minmax(0,1fr)_minmax(20rem,.72fr)] lg:items-start lg:gap-16">
+          <div className="max-w-2xl">
+            <h2 className="text-3xl font-semibold tracking-[-0.035em] sm:text-4xl">Continue your enrolled program.</h2>
+            <p className="mt-4 text-base leading-7 text-[var(--color-muted)]">
+              Student accounts are issued by AECS. Sign in with the email address attached to your enrollment.
             </p>
+            <div className="mt-8 grid gap-5 border-t border-[var(--color-rule)] pt-6 sm:grid-cols-2">
+              <div className="flex gap-3">
+                <ShieldCheck className="mt-0.5 h-5 w-5 shrink-0 text-[var(--color-accent)]" aria-hidden="true" />
+                <div><h3 className="font-semibold">Protected session</h3><p className="mt-1 text-sm leading-6 text-[var(--color-muted)]">Designed for secure, server-issued session cookies.</p></div>
+              </div>
+              <div className="flex gap-3">
+                <Headphones className="mt-0.5 h-5 w-5 shrink-0 text-[var(--color-accent)]" aria-hidden="true" />
+                <div><h3 className="font-semibold">Need access?</h3><p className="mt-1 text-sm leading-6 text-[var(--color-muted)]">Contact your AECS coordinator to confirm enrollment.</p></div>
+              </div>
+            </div>
           </div>
 
-          <ul className="mt-2 divide-y divide-[var(--color-rule)]">
-            {users.map((user) => {
-              const program = PROGRAMS[user.assignedProgram];
-              const scope =
-                user.assignedProgram === 'GERMAN'
-                  ? `German ${user.germanLevel ?? 'A1'}`
-                  : program.name;
-
-              return (
-                <li key={user.id}>
-                  <button
-                    type="button"
-                    onClick={() => openProfile(user.id)}
-                    className="group flex min-h-20 w-full items-center justify-between gap-4 py-4 text-left focus-visible:relative"
-                    aria-label={`Open ${user.fullName}'s ${scope} demo workspace`}
-                  >
-                    <span className="min-w-0">
-                      <span className="block font-display text-base font-semibold text-[var(--color-ink)]">
-                        {user.fullName}
-                      </span>
-                      <span className="mt-1 block text-sm text-[var(--color-muted)]">{scope}</span>
-                    </span>
-                    <span className="flex shrink-0 items-center gap-2 text-sm font-semibold text-[var(--color-ink-2)] group-hover:text-[var(--color-accent-hover)]">
-                      Open
-                      <ArrowRight className="h-4 w-4" aria-hidden="true" />
-                    </span>
-                  </button>
-                </li>
-              );
-            })}
-          </ul>
-
-          <div className="alc-note mt-4">
-            This static GitHub Pages build is a curriculum prototype. Production identity,
-            enrollment, and progress storage require a server-backed deployment.
-          </div>
+          <form className="alc-panel p-5 sm:p-6" onSubmit={submit} aria-labelledby="signin-heading" noValidate>
+            <h3 id="signin-heading" className="text-2xl font-semibold">Student sign in</h3>
+            <p className="mt-2 text-sm leading-6 text-[var(--color-muted)]">Enter the credentials issued with your enrollment.</p>
+            <label htmlFor="email" className="mt-6 block text-sm font-semibold text-[var(--color-ink)]">Email address</label>
+            <input
+              id="email"
+              type="email"
+              autoComplete="email"
+              required
+              value={email}
+              onChange={(event) => {
+                setEmail(event.target.value);
+                if (formState === 'error') setFormState('idle');
+              }}
+              className="alc-field mt-2"
+              aria-invalid={formState === 'error'}
+              placeholder="you@example.com"
+            />
+            <label htmlFor="password" className="mt-5 block text-sm font-semibold text-[var(--color-ink)]">Password</label>
+            <input
+              id="password"
+              type="password"
+              autoComplete="current-password"
+              required
+              minLength={8}
+              value={password}
+              onChange={(event) => {
+                setPassword(event.target.value);
+                if (formState === 'error') setFormState('idle');
+              }}
+              className="alc-field mt-2"
+              aria-invalid={formState === 'error'}
+              placeholder="Enter your password"
+            />
+            <div className="min-h-12 pt-3" aria-live="polite">
+              {formState === 'error' && <p className="text-sm font-medium text-red-700" role="alert">{message}</p>}
+            </div>
+            <button type="submit" className="alc-button-primary w-full" disabled={formState === 'loading' || !email.trim() || password.length < 8}>
+              {formState === 'loading' ? 'Signing in…' : 'Sign in'}
+              {formState !== 'loading' && <ArrowRight className="h-4 w-4" aria-hidden="true" />}
+            </button>
+          </form>
         </section>
       </main>
 
-      <footer className="mx-auto max-w-6xl border-t border-[var(--color-rule)] px-4 py-5 text-sm text-[var(--color-muted)] sm:px-6">
-        AECS Learning Center · Curriculum interface demonstration
+      <footer className="border-t border-[var(--color-rule)] bg-[var(--color-ink)] text-white">
+        <div className="mx-auto flex max-w-7xl flex-col gap-4 px-4 py-8 sm:flex-row sm:items-center sm:justify-between sm:px-6">
+          <div><p className="font-display font-semibold">AECS Learning Center</p><p className="mt-1 text-sm text-white/65">Language test preparation</p></div>
+          <p className="text-sm text-white/65">IELTS · PTE · DET · German CEFR</p>
+        </div>
       </footer>
     </div>
   );

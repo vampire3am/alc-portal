@@ -6,7 +6,7 @@ describe('estimateIeltsBand', () => {
     expect(estimateIeltsBand(0, 0)).toBeNull();
   });
 
-  it('uses the attempted-question ratio for a transparent demo estimate', () => {
+  it('uses the attempted-question ratio for a transparent practice estimate', () => {
     expect(estimateIeltsBand(9, 10)).toBe(9);
     expect(estimateIeltsBand(7, 10)).toBe(7);
     expect(estimateIeltsBand(2, 10)).toBe(5);

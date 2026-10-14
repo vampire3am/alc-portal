@@ -2,6 +2,15 @@
   "version": 1,
   "entries": [
     {
+      "date": "2026-10-14",
+      "route": "public",
+      "genre": "modern-minimal",
+      "macrostructure": "Long Document",
+      "theme": "AECS locked system",
+      "enrichment": "none",
+      "brief": "Production-facing SaaS website and student sign-in"
+    },
+    {
       "route": "app",
       "genre": "modern-minimal",
       "macrostructure": "Workbench",

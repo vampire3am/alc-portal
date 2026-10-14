@@ -46,13 +46,13 @@ Four-point named scale in `tokens.css`. Layout code uses semantic tokens for bes
 - Silent success for visible state changes.
 - No celebratory toasts.
 - Focus indicators appear instantly.
-- Destructive or irreversible actions require explicit confirmation; this demo has none.
+- Destructive or irreversible actions require explicit confirmation.
 
 ## CTA voice
 
 - Primary: ink-filled, 8px radius, compact verb-first label.
 - Secondary: paper surface with a visible rule.
-- Disabled: visibly muted and described as preview-only.
+- Disabled: visibly muted with a concise explanation.
 
 ## Per-page allowances
 

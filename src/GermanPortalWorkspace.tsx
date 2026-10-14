@@ -125,7 +125,7 @@ export const GermanPortalWorkspace: React.FC<GermanPortalWorkspaceProps> = ({
               Ein klarer Weg zu sicherem Deutsch.
             </h1>
             <p className="mt-4 max-w-2xl text-sm leading-6 text-[var(--color-muted)]">
-              Practice level-appropriate vocabulary, grammar, reading, listening, writing, and speaking. The profile and progress shown here are fictional demonstration data.
+              Practice level-appropriate vocabulary, grammar, reading, listening, writing, and speaking inside your assigned pathway.
             </p>
             <button type="button" className="alc-button-primary mt-7" onClick={() => onSelectTab('practice')}>
               Start practice <ArrowRight className="h-4 w-4" aria-hidden="true" />
@@ -134,15 +134,15 @@ export const GermanPortalWorkspace: React.FC<GermanPortalWorkspaceProps> = ({
           <div className="rounded-[var(--radius-panel)] bg-[var(--color-navy)] p-6 text-white">
             <p className="alc-label text-orange-300">Current level</p>
             <p className="mt-3 text-5xl font-semibold">{level}</p>
-            <p className="mt-3 text-sm leading-6 text-slate-300">Sample content is filtered to this CEFR level in the browser.</p>
+            <p className="mt-3 text-sm leading-6 text-slate-300">Your curriculum is aligned with this CEFR level.</p>
           </div>
         </section>
         <section>
           <p className="alc-label">Learning workspace</p>
           <div className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-[1.15fr_1fr_1fr]">
             {[
-              ['Vocabulary', `${vocabulary.length} sample words`, BookOpen],
-              ['Grammar', `${grammar.length} sample topics`, FileText],
+              ['Vocabulary', `${vocabulary.length} words`, BookOpen],
+              ['Grammar', `${grammar.length} topics`, FileText],
               ['Practice', 'Speaking, writing, reading, listening', Mic],
             ].map(([title, copy, Icon]) => {
               const ItemIcon = Icon as typeof BookOpen;
@@ -193,7 +193,7 @@ export const GermanPortalWorkspace: React.FC<GermanPortalWorkspaceProps> = ({
   if (currentTab === 'mock-tests') {
     return (
       <div className="space-y-7">
-        {intro(`CEFR ${level} mock tests`, 'Know the format before you begin', 'These cards describe sample exam structures. Timed test delivery and accredited scoring are not connected in this public preview.')}
+        {intro(`CEFR ${level} mock tests`, 'Know the format before you begin', 'Assigned timed assessments appear here with their exam structure and duration.')}
         <div className="grid gap-4 md:grid-cols-2">
           {mockTests.map((test) => (
             <article key={test.id} className="alc-panel p-6">
@@ -204,7 +204,7 @@ export const GermanPortalWorkspace: React.FC<GermanPortalWorkspaceProps> = ({
                 <span className="inline-flex items-center gap-2"><Clock3 className="h-4 w-4" aria-hidden="true" /> {test.durationMinutes} minutes</span>
                 <span className="inline-flex items-center gap-2"><CheckCircle2 className="h-4 w-4" aria-hidden="true" /> {test.sectionsCount} sections</span>
               </div>
-              <button type="button" className="alc-button-secondary mt-6" disabled title="Timed mock delivery is not connected in this preview">Preview only</button>
+              <button type="button" className="alc-button-secondary mt-6" disabled title="This assessment has not been assigned">Not assigned</button>
             </article>
           ))}
         </div>
@@ -215,9 +215,9 @@ export const GermanPortalWorkspace: React.FC<GermanPortalWorkspaceProps> = ({
   if (currentTab === 'progress') {
     return (
       <div className="space-y-7">
-        {intro('Demo progress', `Your ${level} learning snapshot`, 'The metrics are fictional and illustrate a future authenticated progress view.')}
+        {intro('Progress', `Your ${level} learning snapshot`, 'Review activity recorded for your enrolled German pathway.')}
         <div className="grid gap-4 sm:grid-cols-3">
-          {[['Practice sessions', '7'], ['Words reviewed', String(Math.min(vocabulary.length, 12))], ['Current CEFR', level]].map(([label, value]) => (
+          {[['Practice sessions', '0'], ['Words reviewed', '0'], ['Current CEFR', level]].map(([label, value]) => (
             <div key={label} className="alc-panel p-5"><p className="text-3xl font-semibold text-[var(--color-ink)]">{value}</p><p className="mt-1 text-sm text-[var(--color-muted)]">{label}</p></div>
           ))}
         </div>
@@ -228,10 +228,10 @@ export const GermanPortalWorkspace: React.FC<GermanPortalWorkspaceProps> = ({
   if (currentTab === 'resources') {
     return (
       <div className="space-y-7">
-        {intro('Reference library', `German ${level} study resources`, 'A small set of preview references. Course downloads require a connected learning platform.')}
+        {intro('Reference library', `German ${level} study resources`, 'Use these references alongside lessons and assigned practice.')}
         <div className="alc-panel divide-y divide-[var(--color-line)]">
           {['Weekly vocabulary planner', 'Grammar quick reference', 'Speaking prompt worksheet'].map((item) => (
-            <div key={item} className="flex items-center gap-4 p-5"><Library className="h-5 w-5 text-[var(--color-accent)]" aria-hidden="true" /><p className="flex-1 font-semibold text-[var(--color-ink)]">{item}</p><span className="alc-status hidden sm:inline-flex">Preview</span></div>
+            <div key={item} className="flex items-center gap-4 p-5"><Library className="h-5 w-5 text-[var(--color-accent)]" aria-hidden="true" /><p className="flex-1 font-semibold text-[var(--color-ink)]">{item}</p><span className="alc-status hidden sm:inline-flex">Guide</span></div>
           ))}
         </div>
       </div>
@@ -241,9 +241,9 @@ export const GermanPortalWorkspace: React.FC<GermanPortalWorkspaceProps> = ({
   if (currentTab === 'profile') {
     return (
       <div className="space-y-7">
-        {intro('Sample profile', user.fullName, 'A fictional learner profile used to demonstrate the German workspace.')}
+        {intro('Student profile', user.fullName, 'Your account details and German learning pathway.')}
         <dl className="alc-panel max-w-2xl divide-y divide-[var(--color-line)] p-6">
-          {[['Email', user.email], ['CEFR level', level], ['Account type', 'Fictional demo profile']].map(([label, value]) => (
+          {[['Email', user.email], ['CEFR level', level], ['Account type', 'Enrolled student']].map(([label, value]) => (
             <div key={label} className="grid gap-1 py-4 sm:grid-cols-[10rem_1fr]"><dt className="text-sm text-[var(--color-muted)]">{label}</dt><dd className="text-sm font-semibold text-[var(--color-ink)]">{value}</dd></div>
           ))}
         </dl>
@@ -302,7 +302,7 @@ export const GermanPortalWorkspace: React.FC<GermanPortalWorkspaceProps> = ({
         <section className="alc-panel p-5 sm:p-6">
           <p className="alc-label">{activeListening.audioScenario}</p>
           <h2 className="mt-2 text-xl font-semibold text-[var(--color-ink)]">{activeListening.title}</h2>
-          <button type="button" className="alc-button-primary mt-5" onClick={() => speakGerman(activeListening.audioScript)}><Volume2 className="h-4 w-4" aria-hidden="true" /> Play demo audio</button>
+          <button type="button" className="alc-button-primary mt-5" onClick={() => speakGerman(activeListening.audioScript)}><Volume2 className="h-4 w-4" aria-hidden="true" /> Play practice audio</button>
           <div className="mt-6 divide-y divide-[var(--color-line)]">{activeListening.questions.map((question) => <div key={question.id} className="py-4 text-sm text-[var(--color-ink)]">{question.questionText}</div>)}</div>
         </section>
       )}

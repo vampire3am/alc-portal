@@ -1,5 +1,5 @@
-/* Hallmark · genre: modern-minimal · macrostructure: Workbench · design-system: design.md · designed-as-app */
-/* Hallmark · pre-emit critique: P5 H5 E5 S5 R5 V4 · contrast: pass (40–41) · nav: N3 · footer: Ft2 · slop: pass (42–45) · honest: pass (46) · chrome: pass (47) · tokens: pass (48) · responsive: pass (49) · icons: pass (30) · mobile: pass (34, 49, 50–57) */
+/* Hallmark · macrostructure: Long Document + Workbench · genre: modern-minimal · design-system: design.md · designed-as-saas */
+/* Hallmark · pre-emit critique: P5 H5 E5 S5 R5 V5 · contrast: pass (40–41) · nav: N1b + N3 · footer: Ft2 · slop: pass (42–45) · honest: pass (46) · chrome: pass (47) · tokens: pass (48) · responsive: pass (49) · icons: pass (30) · mobile: pass (34, 49, 50–57) */
 @import url("https://api.fontshare.com/v2/css?f[]=general-sans@600,700&display=swap");
 @import url("https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@500&family=IBM+Plex+Sans:wght@400;500;600&display=swap");
 @import "../tokens.css";
@@ -66,8 +66,8 @@
   }
 
   :focus-visible {
-    outline: 3px solid var(--color-focus);
-    outline-offset: 3px;
+    outline: 2px solid var(--color-focus);
+    outline-offset: 2px;
   }
 
   ::selection {
@@ -156,7 +156,7 @@
     border-color: var(--color-rule);
     background: var(--color-paper-2);
     color: var(--color-muted);
-    opacity: 0.72;
+    opacity: 0.55;
     transform: none;
   }
 
@@ -169,14 +169,33 @@
     color: var(--color-ink);
     padding: 0.7rem 0.8rem;
     font-size: var(--text-sm);
+    outline: 2px solid transparent;
+    outline-offset: 1px;
   }
 
   .alc-field::placeholder {
     color: var(--color-muted);
   }
 
+  .alc-field:hover:not(:disabled) {
+    border-color: var(--color-ink-2);
+  }
+
   .alc-field:focus-visible {
     border-color: var(--color-focus);
+    outline-offset: 1px;
+  }
+
+  .alc-field[aria-invalid="true"] {
+    border-color: var(--color-danger);
+    background: color-mix(in oklch, var(--color-danger) 4%, var(--color-surface));
+  }
+
+  .alc-field:disabled {
+    cursor: not-allowed;
+    background: var(--color-paper-2);
+    color: var(--color-muted);
+    opacity: 0.55;
   }
 
   .alc-chip {

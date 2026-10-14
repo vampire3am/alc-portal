@@ -2,14 +2,12 @@ import React from 'react';
 import {
   ArrowRight,
   BookOpen,
-  CalendarDays,
   CheckCircle2,
   Clock3,
   FileCheck2,
   Library,
   Menu,
   Play,
-  TrendingUp,
   UserRound,
 } from 'lucide-react';
 import { GermanPortalWorkspace } from './GermanPortalWorkspace';
@@ -43,8 +41,6 @@ export const StudentPortal: React.FC<StudentPortalProps> = ({
   onSelectTab,
   onOpenMobileMenu,
 }) => {
-  const recent = program.recentActivity[0];
-
   const renderHeader = () => (
     <header className="sticky top-0 z-20 border-b border-[var(--color-line)] bg-[color:var(--color-paper)/0.94] px-4 py-3 backdrop-blur sm:px-6">
       <div className="mx-auto flex max-w-[1440px] items-center justify-between gap-4">
@@ -75,7 +71,7 @@ export const StudentPortal: React.FC<StudentPortalProps> = ({
           </span>
           <span className="hidden sm:block">
             <span className="block text-sm font-semibold text-[var(--color-ink)]">{user.fullName}</span>
-            <span className="block text-xs text-[var(--color-muted)]">Sample learner</span>
+            <span className="block text-xs text-[var(--color-muted)]">Student</span>
           </span>
         </button>
       </div>
@@ -103,7 +99,7 @@ export const StudentPortal: React.FC<StudentPortalProps> = ({
                 Build exam confidence, one focused session at a time.
               </h1>
               <p className="mt-4 max-w-2xl text-sm leading-6 text-[var(--color-muted)]">
-                {program.welcomeMessage} This public preview uses fictional progress data and does not save coursework.
+                {program.welcomeMessage} Your assigned pathway keeps each study session focused on the right exam.
               </p>
               <div className="mt-7 flex flex-wrap gap-3">
                 <button type="button" className="alc-button-primary" onClick={() => onSelectTab('practice')}>
@@ -145,7 +141,7 @@ export const StudentPortal: React.FC<StudentPortalProps> = ({
               {[
                 { tab: 'learn' as const, icon: BookOpen, title: 'Learn', copy: 'Review concepts and exam structure.' },
                 { tab: 'practice' as const, icon: Play, title: 'Practice', copy: 'Try short, skill-specific activities.' },
-                { tab: 'mock-tests' as const, icon: FileCheck2, title: 'Mock tests', copy: 'Preview the full test workflow.' },
+                { tab: 'mock-tests' as const, icon: FileCheck2, title: 'Mock tests', copy: 'Review assigned full-test workflows.' },
               ].map(({ tab, icon: Icon, title, copy }) => (
                 <button key={tab} type="button" onClick={() => onSelectTab(tab)} className="alc-panel group p-5 text-left hover:border-[var(--color-accent)]">
                   <Icon className="h-5 w-5 text-[var(--color-accent)]" aria-hidden="true" />
@@ -161,9 +157,9 @@ export const StudentPortal: React.FC<StudentPortalProps> = ({
 
           <section className="alc-panel grid gap-6 p-6 md:grid-cols-[minmax(0,1fr)_auto] md:items-center">
             <div>
-              <p className="alc-label">Recent activity</p>
-              <h2 className="mt-2 text-xl font-semibold text-[var(--color-ink)]">{recent?.title ?? 'Orientation module'}</h2>
-              <p className="mt-2 text-sm text-[var(--color-muted)]">{recent?.area ?? program.learningAreas[0]} · Fictional demo history</p>
+              <p className="alc-label">Recommended next</p>
+              <h2 className="mt-2 text-xl font-semibold text-[var(--color-ink)]">{program.learningAreas[0]} foundations</h2>
+              <p className="mt-2 text-sm text-[var(--color-muted)]">Begin with the first skill area in your assigned curriculum.</p>
             </div>
             <button type="button" className="alc-button-secondary" onClick={() => onSelectTab('progress')}>View progress</button>
           </section>
@@ -179,8 +175,8 @@ export const StudentPortal: React.FC<StudentPortalProps> = ({
             practice ? 'Skill drills' : 'Curriculum',
             practice ? `${program.name} practice` : `${program.name} learning path`,
             practice
-              ? 'Choose a skill area to preview the interaction pattern. Answers and attempts remain in this browser session only.'
-              : 'A clear progression from fundamentals to test-day strategy, presented as a product demonstration.',
+              ? 'Choose a skill area and work through a focused activity.'
+              : 'Follow a clear progression from fundamentals to test-day strategy.',
           )}
           <div className="alc-panel divide-y divide-[var(--color-line)]">
             {program.learningAreas.map((area, index) => (
@@ -191,7 +187,7 @@ export const StudentPortal: React.FC<StudentPortalProps> = ({
                 <div>
                   <h2 className="text-base font-semibold text-[var(--color-ink)]">{area}</h2>
                   <p className="mt-1 text-sm text-[var(--color-muted)]">
-                    {practice ? 'A short sample drill with immediate feedback.' : 'Concept guide, examples, and test strategy.'}
+                    {practice ? 'A short drill with immediate feedback.' : 'Concept guide, examples, and test strategy.'}
                   </p>
                 </div>
                 <span className="alc-status w-fit">{areaStatus[index] ?? 'Ready'}</span>
@@ -205,18 +201,18 @@ export const StudentPortal: React.FC<StudentPortalProps> = ({
     if (currentTab === 'mock-tests') {
       return (
         <div className="space-y-7">
-          {pageIntro('Simulation preview', program.mockTestLabel, 'Review the structure and timing before starting. This demo does not provide accredited scoring or persist attempts.')}
+          {pageIntro('Assessment', program.mockTestLabel, 'Review the structure and timing of available assessments. Tests appear here when assigned by AECS.')}
           <div className="grid gap-4 md:grid-cols-2">
             {[1, 2].map((number) => (
               <article key={number} className="alc-panel p-6">
                 <FileCheck2 className="h-6 w-6 text-[var(--color-accent)]" aria-hidden="true" />
                 <h2 className="mt-6 text-xl font-semibold text-[var(--color-ink)]">Practice form {number}</h2>
                 <div className="mt-4 flex flex-wrap gap-x-5 gap-y-2 text-sm text-[var(--color-muted)]">
-                  <span className="inline-flex items-center gap-2"><Clock3 className="h-4 w-4" aria-hidden="true" /> Timed preview</span>
-                  <span className="inline-flex items-center gap-2"><CheckCircle2 className="h-4 w-4" aria-hidden="true" /> Sample content</span>
+                  <span className="inline-flex items-center gap-2"><Clock3 className="h-4 w-4" aria-hidden="true" /> Timed assessment</span>
+                  <span className="inline-flex items-center gap-2"><CheckCircle2 className="h-4 w-4" aria-hidden="true" /> Instructor assigned</span>
                 </div>
-                <button type="button" className="alc-button-secondary mt-6" disabled title="Interactive mock tests are not connected in this public preview">
-                  Preview only
+                <button type="button" className="alc-button-secondary mt-6" disabled title="This assessment has not been assigned">
+                  Not assigned
                 </button>
               </article>
             ))}
@@ -228,36 +224,12 @@ export const StudentPortal: React.FC<StudentPortalProps> = ({
     if (currentTab === 'progress') {
       return (
         <div className="space-y-7">
-          {pageIntro('Demo progress', 'A calmer view of your study rhythm', 'All values below are fictional examples. A production portal would calculate these from authenticated, server-side attempt data.')}
-          <div className="grid gap-4 sm:grid-cols-3">
-            {[
-              ['Sessions', '8', CalendarDays],
-              ['Practice hours', '6.5', Clock3],
-              ['Modules sampled', `${Math.min(3, program.learningAreas.length)} / ${program.learningAreas.length}`, TrendingUp],
-            ].map(([label, value, Icon]) => {
-              const MetricIcon = Icon as typeof CalendarDays;
-              return (
-                <div key={label as string} className="alc-panel p-5">
-                  <MetricIcon className="h-5 w-5 text-[var(--color-accent)]" aria-hidden="true" />
-                  <p className="mt-6 text-3xl font-semibold text-[var(--color-ink)]">{value as string}</p>
-                  <p className="mt-1 text-sm text-[var(--color-muted)]">{label as string}</p>
-                </div>
-              );
-            })}
-          </div>
-          <div className="alc-panel p-6">
-            <h2 className="text-lg font-semibold text-[var(--color-ink)]">Recent sample activity</h2>
-            <div className="mt-4 divide-y divide-[var(--color-line)]">
-              {program.recentActivity.map((item) => (
-                <div key={item.id} className="flex flex-col gap-1 py-4 sm:flex-row sm:items-center sm:justify-between">
-                  <div>
-                    <p className="text-sm font-semibold text-[var(--color-ink)]">{item.title}</p>
-                    <p className="text-xs text-[var(--color-muted)]">{item.area}</p>
-                  </div>
-                  <span className="text-xs text-[var(--color-muted)]">{item.time}</span>
-                </div>
-              ))}
-            </div>
+          {pageIntro('Progress', 'Your study rhythm', 'Completed lessons, practice attempts, and instructor feedback will appear here as you work through the program.')}
+          <div className="alc-panel p-8 text-center">
+            <CheckCircle2 className="mx-auto h-6 w-6 text-[var(--color-accent)]" aria-hidden="true" />
+            <h2 className="mt-4 text-xl font-semibold text-[var(--color-ink)]">No completed activity yet</h2>
+            <p className="mx-auto mt-2 max-w-xl text-sm leading-6 text-[var(--color-muted)]">Start a learning module or practice activity to begin building your progress record.</p>
+            <button type="button" className="alc-button-primary mt-5" onClick={() => onSelectTab('learn')}>Start learning</button>
           </div>
         </div>
       );
@@ -266,16 +238,16 @@ export const StudentPortal: React.FC<StudentPortalProps> = ({
     if (currentTab === 'resources') {
       return (
         <div className="space-y-7">
-          {pageIntro('Reference library', `${program.name} resources`, 'A concise set of orientation materials for the public prototype. Downloadable course files require a connected learning platform.')}
+          {pageIntro('Reference library', `${program.name} resources`, 'Use these guides alongside your lessons and assigned practice.')}
           <div className="alc-panel divide-y divide-[var(--color-line)]">
             {['Test format overview', 'Weekly study planner', 'Speaking and writing checklist'].map((resource, index) => (
               <div key={resource} className="flex items-center gap-4 p-5">
                 <Library className="h-5 w-5 shrink-0 text-[var(--color-accent)]" aria-hidden="true" />
                 <div className="min-w-0 flex-1">
                   <p className="font-semibold text-[var(--color-ink)]">{resource}</p>
-                  <p className="mt-1 text-sm text-[var(--color-muted)]">Reference {String(index + 1).padStart(2, '0')} · Preview description</p>
+                  <p className="mt-1 text-sm text-[var(--color-muted)]">Reference {String(index + 1).padStart(2, '0')}</p>
                 </div>
-                <span className="alc-status hidden sm:inline-flex">Preview</span>
+                <span className="alc-status hidden sm:inline-flex">Guide</span>
               </div>
             ))}
           </div>
@@ -285,7 +257,7 @@ export const StudentPortal: React.FC<StudentPortalProps> = ({
 
     return (
       <div className="space-y-7">
-        {pageIntro('Sample profile', user.fullName, 'This fictional profile is provided to demonstrate the portal interface. It is not an authenticated account.')}
+        {pageIntro('Student profile', user.fullName, 'Your account details and assigned learning pathway.')}
         <div className="alc-panel max-w-2xl p-6">
           <div className="flex items-center gap-4 border-b border-[var(--color-line)] pb-6">
             <span className="grid h-14 w-14 place-items-center rounded-full bg-[var(--color-navy)] text-xl font-semibold text-white">
@@ -303,11 +275,11 @@ export const StudentPortal: React.FC<StudentPortalProps> = ({
             </div>
             <div className="grid gap-1 py-4 sm:grid-cols-[10rem_1fr]">
               <dt className="text-sm text-[var(--color-muted)]">Profile type</dt>
-              <dd className="text-sm font-semibold text-[var(--color-ink)]">Fictional demo learner</dd>
+              <dd className="text-sm font-semibold text-[var(--color-ink)]">Enrolled student</dd>
             </div>
             <div className="grid gap-1 py-4 sm:grid-cols-[10rem_1fr]">
               <dt className="text-sm text-[var(--color-muted)]">Data storage</dt>
-              <dd className="text-sm font-semibold text-[var(--color-ink)]">Selection only, for this browser session</dd>
+              <dd className="text-sm font-semibold text-[var(--color-ink)]">Managed by the AECS account service</dd>
             </div>
           </dl>
         </div>

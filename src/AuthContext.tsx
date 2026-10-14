@@ -1,99 +1,108 @@
-import React, { createContext, useContext, useMemo, useState } from 'react';
+import React, { createContext, useContext, useEffect, useMemo, useState } from 'react';
 import type { UserAccount } from './types';
+
+interface LoginResult {
+  ok: boolean;
+  message?: string;
+}
 
 interface AuthContextType {
   currentUser: UserAccount | null;
-  users: UserAccount[];
-  selectDemoProfile: (userId: string) => boolean;
-  logout: () => void;
+  isLoading: boolean;
+  login: (email: string, password: string) => Promise<LoginResult>;
+  logout: () => Promise<void>;
 }
 
-const SESSION_KEY = 'alc_demo_profile_id';
-
-const DEMO_USERS: UserAccount[] = [
-  {
-    id: 'student-ielts-1',
-    fullName: 'Aarav Sharma',
-    email: 'aarav@example.com',
-    phone: '+977 9841234567',
-    assignedProgram: 'IELTS',
-    registrationDate: '2026-10-01',
-  },
-  {
-    id: 'student-german-a1',
-    fullName: 'Sneha Thapa',
-    email: 'sneha@example.com',
-    phone: '+977 9851234567',
-    assignedProgram: 'GERMAN',
-    germanLevel: 'A1',
-    registrationDate: '2026-10-10',
-  },
-  {
-    id: 'student-german-b1',
-    fullName: 'Lukas Meyer',
-    email: 'lukas@example.com',
-    phone: '+977 9801234567',
-    assignedProgram: 'GERMAN',
-    germanLevel: 'B1',
-    registrationDate: '2026-10-12',
-  },
-  {
-    id: 'student-pte-1',
-    fullName: 'Priya Shrestha',
-    email: 'priya@example.com',
-    phone: '+977 9801987654',
-    assignedProgram: 'PTE',
-    registrationDate: '2026-10-04',
-  },
-  {
-    id: 'student-det-1',
-    fullName: 'Rohan Adhikari',
-    email: 'rohan@example.com',
-    phone: '+977 9812345678',
-    assignedProgram: 'DET',
-    registrationDate: '2026-10-08',
-  },
-];
-
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
+const API_URL = (import.meta.env.VITE_AUTH_API_URL as string | undefined)?.replace(/\/$/, '');
 
-const readDemoProfile = () => {
+const getMessage = async (response: Response, fallback: string) => {
   try {
-    const id = sessionStorage.getItem(SESSION_KEY);
-    return DEMO_USERS.find((user) => user.id === id) ?? null;
+    const body = await response.json() as { message?: string };
+    return body.message || fallback;
   } catch {
-    return null;
+    return fallback;
   }
 };
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [currentUser, setCurrentUser] = useState<UserAccount | null>(readDemoProfile);
+  const [currentUser, setCurrentUser] = useState<UserAccount | null>(null);
+  const [isLoading, setIsLoading] = useState(Boolean(API_URL));
+
+  useEffect(() => {
+    if (!API_URL) return;
+
+    const controller = new AbortController();
+    fetch(`${API_URL}/session`, {
+      credentials: 'include',
+      headers: { Accept: 'application/json' },
+      signal: controller.signal,
+    })
+      .then(async (response) => {
+        if (!response.ok) return null;
+        const body = await response.json() as { user?: UserAccount };
+        return body.user ?? null;
+      })
+      .then((user) => setCurrentUser(user))
+      .catch((error: unknown) => {
+        if (error instanceof DOMException && error.name === 'AbortError') return;
+        setCurrentUser(null);
+      })
+      .finally(() => setIsLoading(false));
+
+    return () => controller.abort();
+  }, []);
 
   const value = useMemo<AuthContextType>(
     () => ({
       currentUser,
-      users: DEMO_USERS,
-      selectDemoProfile: (userId) => {
-        const user = DEMO_USERS.find((candidate) => candidate.id === userId);
-        if (!user) return false;
-        setCurrentUser(user);
-        try {
-          sessionStorage.setItem(SESSION_KEY, user.id);
-        } catch {
-          // The demo still works when storage is unavailable.
+      isLoading,
+      login: async (email, password) => {
+        if (!API_URL) {
+          return {
+            ok: false,
+            message: 'Student sign-in is being configured. Please contact your AECS coordinator for access.',
+          };
         }
-        return true;
-      },
-      logout: () => {
-        setCurrentUser(null);
+
         try {
-          sessionStorage.removeItem(SESSION_KEY);
+          const response = await fetch(`${API_URL}/login`, {
+            method: 'POST',
+            credentials: 'include',
+            headers: {
+              Accept: 'application/json',
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ email, password }),
+          });
+
+          if (!response.ok) {
+            return { ok: false, message: await getMessage(response, 'Email or password was not accepted.') };
+          }
+
+          const body = await response.json() as { user?: UserAccount };
+          if (!body.user) return { ok: false, message: 'The account response was incomplete.' };
+          setCurrentUser(body.user);
+          return { ok: true };
         } catch {
-          // The in-memory session has already been cleared.
+          return { ok: false, message: 'The sign-in service could not be reached. Please try again.' };
+        }
+      },
+      logout: async () => {
+        setCurrentUser(null);
+        if (!API_URL) return;
+        try {
+          await fetch(`${API_URL}/logout`, {
+            method: 'POST',
+            credentials: 'include',
+            headers: { Accept: 'application/json' },
+          });
+        } catch {
+          // The local session is cleared even if the network is unavailable.
         }
       },
     }),
-    [currentUser],
+    [currentUser, isLoading],
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
