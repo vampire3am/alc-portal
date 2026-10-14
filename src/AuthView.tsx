@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import {
   ArrowRight,
   BookOpenCheck,
-  Check,
   FileCheck2,
   Headphones,
   ShieldCheck,
@@ -30,7 +29,7 @@ export const AuthView: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-[var(--color-paper)] text-[var(--color-ink)]">
-      <header className="sticky top-0 z-30 border-b border-[var(--color-rule)] bg-[color:var(--color-paper)/0.94] backdrop-blur">
+      <header className="sticky top-0 z-30 border-b border-[var(--color-rule)] bg-[var(--color-paper)]">
         <div className="mx-auto flex min-h-16 max-w-7xl items-center justify-between gap-4 px-4 sm:px-6">
           <a href="#top" className="flex min-w-0 items-center gap-3" aria-label="AECS Learning Center home">
             <span className="grid h-10 w-10 shrink-0 place-items-center rounded-lg bg-[var(--color-ink)] font-display text-sm font-bold text-white">ALC</span>
@@ -46,12 +45,12 @@ export const AuthView: React.FC = () => {
       </header>
 
       <main id="top">
-        <section className="border-b border-[var(--color-rule)]">
-          <div className="mx-auto grid max-w-7xl gap-10 px-4 pb-16 pt-12 sm:px-6 sm:pb-28 sm:pt-20 lg:grid-cols-[minmax(0,1.25fr)_minmax(19rem,.75fr)] lg:items-end lg:gap-16">
+        <section className="lumen-hero">
+          <div className="mx-auto grid max-w-7xl gap-10 px-4 pb-16 pt-12 sm:px-6 sm:pb-28 sm:pt-20 lg:grid-cols-[minmax(0,1.15fr)_minmax(22rem,.85fr)] lg:items-center lg:gap-16">
             <div>
-              <p className="alc-label">Focused preparation for ambitious learners</p>
-              <h1 className="mt-5 max-w-[14ch] text-[clamp(2.75rem,7vw,5.5rem)] font-semibold leading-[.96] tracking-[-.05em]">
-                Prepare with a plan that fits your exam.
+              <p className="alc-label">00 · learning system</p>
+              <h1 className="lumen-title mt-5 max-w-[14ch] leading-[.96] tracking-[-.05em]">
+                <em>Prepare</em> with a plan that fits your exam.
               </h1>
               <p className="mt-6 max-w-2xl text-base leading-7 text-[var(--color-ink-2)] sm:text-lg">
                 AECS brings lessons, targeted practice, mock-test workflows, and progress tracking into one focused workspace for every enrolled student.
@@ -61,30 +60,34 @@ export const AuthView: React.FC = () => {
                 <a href="#access" className="alc-button-secondary">Student sign in</a>
               </div>
             </div>
-            <aside className="border-t border-[var(--color-rule)] pt-6 lg:border-l lg:border-t-0 lg:pl-8 lg:pt-0">
-              <p className="alc-label">One workspace, one goal</p>
-              <ul className="mt-5 space-y-5">
-                {[
-                  ['Assigned learning path', 'See only the curriculum connected to your enrollment.'],
-                  ['Exam-shaped practice', 'Work through activities organized around the test format.'],
-                  ['Progress in context', 'Review attempts and return to the next useful task.'],
-                ].map(([title, copy]) => (
-                  <li key={title} className="flex gap-3">
-                    <Check className="mt-0.5 h-5 w-5 shrink-0 text-[var(--color-accent)]" aria-hidden="true" />
-                    <span>
-                      <span className="block font-semibold text-[var(--color-ink)]">{title}</span>
-                      <span className="mt-1 block text-sm leading-6 text-[var(--color-muted)]">{copy}</span>
-                    </span>
-                  </li>
-                ))}
-              </ul>
-            </aside>
+            <figure className="lumen-apparatus" aria-label="Four AECS programs routed into one assigned student workspace">
+              <span className="lumen-beam" aria-hidden="true" />
+              <div className="lumen-prism" aria-hidden="true" />
+              <span className="lumen-ray [--ray-angle:-18deg] [--ray-color:var(--color-accent)] [--ray-offset:-1.25rem]" aria-hidden="true" />
+              <span className="lumen-ray [--ray-angle:-7deg] [--ray-color:var(--color-spectrum-mid)] [--ray-offset:-.25rem]" aria-hidden="true" />
+              <span className="lumen-ray [--ray-angle:5deg] [--ray-color:var(--color-accent-2)] [--ray-offset:.75rem]" aria-hidden="true" />
+              <span className="lumen-callout lumen-callout--one">programs · 04</span>
+              <span className="lumen-callout lumen-callout--two">levels · a1–b2</span>
+              <span className="lumen-callout lumen-callout--three">skills · 04–06</span>
+              <span className="lumen-callout lumen-callout--four">access · enrolled</span>
+            </figure>
           </div>
         </section>
 
+        <aside className="lumen-meter" aria-label="AECS learning workflow readout">
+          <p className="lumen-meter__label">path · assigned</p>
+          <div className="lumen-meter__bars" aria-hidden="true">
+            {Array.from({ length: 48 }, (_, index) => {
+              const height = 24 + Math.round((Math.sin(index / 4) + 1) * 28);
+              return <span key={index} style={{ height: `${height}%` }} />;
+            })}
+          </div>
+          <p className="lumen-meter__label">learn · practice · assess</p>
+        </aside>
+
         <section id="programs" className="mx-auto max-w-7xl px-4 py-16 sm:px-6 sm:py-20" aria-labelledby="programs-heading">
           <div className="max-w-3xl">
-            <p className="alc-label">Programs</p>
+            <p className="alc-label">01 · programs</p>
             <h2 id="programs-heading" className="mt-3 text-3xl font-semibold tracking-[-0.035em] sm:text-4xl">A workspace shaped around the exam.</h2>
             <p className="mt-4 text-base leading-7 text-[var(--color-muted)]">Build the skills, timing, and familiarity required by your chosen pathway.</p>
           </div>
@@ -110,7 +113,8 @@ export const AuthView: React.FC = () => {
         <section id="platform" className="border-y border-[var(--color-rule)] bg-[var(--color-surface)]">
           <div className="mx-auto grid max-w-7xl gap-10 px-4 py-16 sm:px-6 sm:py-20 lg:grid-cols-[minmax(17rem,.7fr)_minmax(0,1.3fr)] lg:gap-16">
             <div>
-              <h2 className="text-3xl font-semibold tracking-[-0.035em] sm:text-4xl">Less switching. More deliberate practice.</h2>
+              <p className="alc-label">02 · workspace</p>
+              <h2 className="mt-3 text-3xl font-semibold tracking-[-0.035em] sm:text-4xl">Less switching. More deliberate practice.</h2>
               <p className="mt-4 text-base leading-7 text-[var(--color-muted)]">The student workspace keeps curriculum, practice, assessment, and progress together without burying the next action.</p>
             </div>
             <div className="divide-y divide-[var(--color-rule)] border-y border-[var(--color-rule)]">
@@ -137,7 +141,8 @@ export const AuthView: React.FC = () => {
 
         <section id="access" className="mx-auto grid max-w-7xl gap-10 px-4 py-16 sm:px-6 sm:py-20 lg:grid-cols-[minmax(0,1fr)_minmax(20rem,.72fr)] lg:items-start lg:gap-16">
           <div className="max-w-2xl">
-            <h2 className="text-3xl font-semibold tracking-[-0.035em] sm:text-4xl">Continue your enrolled program.</h2>
+            <p className="alc-label">03 · access</p>
+            <h2 className="mt-3 text-3xl font-semibold tracking-[-0.035em] sm:text-4xl">Continue your enrolled program.</h2>
             <p className="mt-4 text-base leading-7 text-[var(--color-muted)]">
               Student accounts are issued by AECS. Sign in with the email address attached to your enrollment.
             </p>

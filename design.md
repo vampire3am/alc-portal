@@ -1,78 +1,60 @@
 # Design — AECS Learning Center
 
-A locked design system for this app. Every surface reads this file before visual changes.
+The locked visual system for the public site and enrolled learner workspace.
 
 ## Genre
 
-Modern-minimal: calm, academic, practical, and trustworthy.
+Lumen / Day Foundry: a precise academic instrument made from paper, light, type, and measured rules.
 
 ## Macrostructure family
 
-- Entry/auth surfaces: compact Marquee, left-biased statement with an adjacent access panel.
-- App surfaces: Workbench, with a persistent navigation rail and one primary workspace.
-- Content surfaces: Long Document, using readable measures and restrained section breaks.
+- Public entry: Instrument Panel with a blueprint hero, functional learning-system apparatus, and live-style workflow readout.
+- App surfaces: Workbench with persistent navigation and one primary task area.
+- Learning content: Long Document with restrained dividers and readable measures.
 
 ## Theme
 
-- `--color-paper`: `oklch(98.5% 0.006 248)`
-- `--color-paper-2`: `oklch(95.8% 0.012 248)`
-- `--color-ink`: `oklch(22% 0.035 255)`
-- `--color-ink-2`: `oklch(43% 0.035 252)`
-- `--color-rule`: `oklch(87% 0.018 248)`
-- `--color-accent`: `oklch(62% 0.19 43)`
-- `--color-focus`: `oklch(56% 0.18 250)`
+- Paper: `oklch(97% 0.008 265)`
+- Surface: `oklch(99% 0.006 265)`
+- Ink: `oklch(18% 0.014 265)`
+- Muted ink: `oklch(45% 0.018 265)`
+- Rule: `oklch(82% 0.02 265)`
+- Indigo light: `oklch(46% 0.24 268)`
+- Coral action accent: `oklch(58% 0.19 18)`
+
+The indigo anchor carries navigation, focus, diagrams, and primary action. Coral appears only on the hero verb and spectral detail. The public hero contains the sole decorative apparatus.
 
 ## Typography
 
-- Display: General Sans, weight 600–700, roman.
-- Body: IBM Plex Sans, weight 400–600.
-- Mono: IBM Plex Mono, weight 500.
-- Display tracking: `-0.035em`.
-- Body floor: 14px; primary reading copy: 16px.
+- Display: Instrument Serif, 400, roman only.
+- Body: Geist, 400–600.
+- Mono labels: JetBrains Mono, 400–500, uppercase.
+- Prose is lowercase by default; email and password inputs preserve entered case.
+- Italics are prohibited.
 
-## Spacing
+## Spacing and shape
 
-Four-point named scale in `tokens.css`. Layout code uses semantic tokens for bespoke CSS.
+Four-point named scale in `tokens.css`. Use hairline rules, 8px inputs, and 12px panels. Avoid pill-shaped containers except for true status tags.
 
 ## Motion
 
-- Ease out: `cubic-bezier(0.16, 1, 0.3, 1)`.
-- No page reveals or scroll effects.
-- Interaction motion is limited to opacity and transform.
-- Reduced motion uses instant state changes or opacity-only transitions under 150ms.
-
-## Microinteractions stance
-
-- Silent success for visible state changes.
-- No celebratory toasts.
-- Focus indicators appear instantly.
-- Destructive or irreversible actions require explicit confirmation.
+- Hero apparatus and accent underline reveal once in 320ms.
+- Interaction motion is limited to opacity, transform, and border/color state.
+- Reduced motion removes the reveal and shortens state changes.
 
 ## CTA voice
 
-- Primary: ink-filled, 8px radius, compact verb-first label.
-- Secondary: paper surface with a visible rule.
-- Disabled: visibly muted with a concise explanation.
+- Compact, verb-first labels.
+- Primary: indigo field with light text.
+- Secondary: paper field with visible rule.
+- Disabled: visibly muted, with the form requirements still readable.
 
-## Per-page allowances
-
-- Entry pages may use typography as the only enrichment.
-- App pages use no decorative enrichment; function carries the page.
-- Learning content uses reading typography and data-led controls.
-
-## What pages MUST share
+## Shared rules
 
 - AECS wordmark and ALC monogram.
-- Navy/orange placement, with orange under 5% of each viewport.
-- General Sans + IBM Plex Sans pairing.
-- Eight-state interaction discipline and visible focus.
-- Minimum 44px touch targets below 640px.
-
-## What pages MAY differ on
-
-- Workspace density and local toolbars.
-- Content module layout.
-- Whether a page uses the full side rail or compact mobile header.
+- Visible focus, 44px minimum touch targets, and semantic status colors.
+- One real-data apparatus per public page; no fabricated outcomes or vanity metrics.
+- No glass effects, generic icon cards, floating blobs, or excessive rounding.
 
 ## Exports
 
@@ -89,13 +71,15 @@ The canonical implementation is `tokens.css` at the project root.
 ```json
 {
   "color": {
-    "paper": { "$value": "oklch(98.5% 0.006 248)", "$type": "color" },
-    "ink": { "$value": "oklch(22% 0.035 255)", "$type": "color" },
-    "accent": { "$value": "oklch(62% 0.19 43)", "$type": "color" }
+    "paper": { "$value": "oklch(97% 0.008 265)", "$type": "color" },
+    "ink": { "$value": "oklch(18% 0.014 265)", "$type": "color" },
+    "accent": { "$value": "oklch(46% 0.24 268)", "$type": "color" },
+    "accentSecondary": { "$value": "oklch(58% 0.19 18)", "$type": "color" }
   },
   "font": {
-    "display": { "$value": "General Sans", "$type": "fontFamily" },
-    "body": { "$value": "IBM Plex Sans", "$type": "fontFamily" }
+    "display": { "$value": "Instrument Serif", "$type": "fontFamily" },
+    "body": { "$value": "Geist", "$type": "fontFamily" },
+    "mono": { "$value": "JetBrains Mono", "$type": "fontFamily" }
   },
   "space": { "md": { "$value": "1.5rem", "$type": "dimension" } }
 }
@@ -105,15 +89,15 @@ The canonical implementation is `tokens.css` at the project root.
 
 ```css
 :root {
-  --background: 98.5% 0.006 248;
-  --foreground: 22% 0.035 255;
-  --primary: 62% 0.19 43;
-  --primary-foreground: 99% 0.004 250;
-  --muted: 95.8% 0.012 248;
-  --muted-foreground: 43% 0.035 252;
-  --border: 87% 0.018 248;
-  --input: 87% 0.018 248;
-  --ring: 56% 0.18 250;
+  --background: 97% 0.008 265;
+  --foreground: 18% 0.014 265;
+  --primary: 46% 0.24 268;
+  --primary-foreground: 99% 0.006 265;
+  --muted: 94% 0.012 265;
+  --muted-foreground: 45% 0.018 265;
+  --border: 82% 0.02 265;
+  --input: 82% 0.02 265;
+  --ring: 52% 0.22 268;
   --radius: 0.5rem;
 }
 ```

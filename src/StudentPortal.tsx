@@ -42,7 +42,7 @@ export const StudentPortal: React.FC<StudentPortalProps> = ({
   onOpenMobileMenu,
 }) => {
   const renderHeader = () => (
-    <header className="sticky top-0 z-20 border-b border-[var(--color-line)] bg-[color:var(--color-paper)/0.94] px-4 py-3 backdrop-blur sm:px-6">
+    <header className="sticky top-0 z-20 border-b border-[var(--color-line)] bg-[var(--color-paper)] px-4 py-3 sm:px-6">
       <div className="mx-auto flex max-w-[1440px] items-center justify-between gap-4">
         <div className="flex min-w-0 items-center gap-3">
           <button

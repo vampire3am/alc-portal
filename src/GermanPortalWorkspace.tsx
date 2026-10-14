@@ -173,7 +173,7 @@ export const GermanPortalWorkspace: React.FC<GermanPortalWorkspaceProps> = ({
                   <div><p className="text-lg font-semibold text-[var(--color-ink)]">{item.article !== '-' ? `${item.article} ` : ''}{item.word}</p><p className="mt-1 text-sm text-[var(--color-muted)]">{item.meaning}</p></div>
                   <button type="button" className="alc-button-quiet shrink-0" onClick={() => speakGerman(item.word)} aria-label={`Hear ${item.word}`}><Volume2 className="h-4 w-4" aria-hidden="true" /></button>
                 </div>
-                <p className="mt-4 text-sm italic text-[var(--color-ink)]">{item.exampleSentence}</p>
+                <p className="mt-4 text-sm text-[var(--color-ink)]">{item.exampleSentence}</p>
               </article>
             ))}
           </div>
@@ -311,7 +311,7 @@ export const GermanPortalWorkspace: React.FC<GermanPortalWorkspaceProps> = ({
         <section className="alc-panel p-5 sm:p-6">
           <p className="alc-label">{activeReading.contentType}</p>
           <h2 className="mt-2 text-xl font-semibold text-[var(--color-ink)]">{activeReading.title}</h2>
-          <p className="mt-5 whitespace-pre-line font-serif text-sm leading-7 text-[var(--color-ink)]">{activeReading.passage}</p>
+          <p className="mt-5 whitespace-pre-line font-[var(--font-body)] text-sm leading-7 text-[var(--color-ink)]">{activeReading.passage}</p>
           <div className="mt-6 divide-y divide-[var(--color-line)]">{activeReading.questions.map((question) => <div key={question.id} className="py-4 text-sm text-[var(--color-ink)]">{question.questionText}</div>)}</div>
         </section>
       )}

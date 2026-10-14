@@ -4,6 +4,15 @@
     {
       "date": "2026-10-14",
       "route": "public",
+      "genre": "lumen-day-foundry",
+      "macrostructure": "Instrument Panel + blueprint apparatus",
+      "theme": "Lumen 19 / Day Foundry",
+      "enrichment": "learning-system prism",
+      "brief": "Production SaaS entry, program evidence, and secure student access"
+    },
+    {
+      "date": "2026-10-14",
+      "route": "public",
       "genre": "modern-minimal",
       "macrostructure": "Long Document",
       "theme": "AECS locked system",

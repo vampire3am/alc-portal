@@ -338,7 +338,7 @@ export const IeltsPortalWorkspace: React.FC<IeltsPortalWorkspaceProps> = ({
           <article className="alc-panel p-5 lg:max-h-[46rem] lg:overflow-y-auto">
             <p className="alc-label">Reading passage</p>
             <h2 className="mt-2 text-xl font-semibold text-[var(--color-ink)]">{activeTest.reading[0].title}</h2>
-            <p className="mt-5 whitespace-pre-line font-serif text-sm leading-7 text-[var(--color-ink)]">{activeTest.reading[0].passageText}</p>
+            <p className="mt-5 whitespace-pre-line font-[var(--font-body)] text-sm leading-7 text-[var(--color-ink)]">{activeTest.reading[0].passageText}</p>
           </article>
           <section className="alc-panel p-5 lg:max-h-[46rem] lg:overflow-y-auto" aria-labelledby="reading-questions">
             <h2 id="reading-questions" className="text-xl font-semibold text-[var(--color-ink)]">Questions</h2>
