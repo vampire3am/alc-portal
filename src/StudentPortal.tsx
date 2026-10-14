@@ -1,18 +1,20 @@
-import React, { useState } from 'react';
-import { UserAccount, ProgramConfig, ViewTab } from './types';
+import React from 'react';
+import {
+  ArrowRight,
+  BookOpen,
+  CalendarDays,
+  CheckCircle2,
+  Clock3,
+  FileCheck2,
+  Library,
+  Menu,
+  Play,
+  TrendingUp,
+  UserRound,
+} from 'lucide-react';
 import { GermanPortalWorkspace } from './GermanPortalWorkspace';
 import { IeltsPortalWorkspace } from './IeltsPortalWorkspace';
-import { 
-  Menu, 
-  Bell, 
-  ArrowRight, 
-  BookOpen, 
-  PenTool, 
-  FileCheck2, 
-  TrendingUp, 
-  CheckCircle2, 
-  ChevronRight,
-} from 'lucide-react';
+import type { ProgramConfig, UserAccount, ViewTab } from './types';
 
 interface StudentPortalProps {
   user: UserAccount;
@@ -20,8 +22,19 @@ interface StudentPortalProps {
   currentTab: ViewTab;
   onSelectTab: (tab: ViewTab) => void;
   onOpenMobileMenu: () => void;
-  onOpenAdminModal: () => void;
 }
+
+const tabTitles: Record<ViewTab, string> = {
+  dashboard: 'Study overview',
+  learn: 'Curriculum',
+  practice: 'Practice',
+  'mock-tests': 'Mock tests',
+  progress: 'Progress',
+  resources: 'Resources',
+  profile: 'Profile',
+};
+
+const areaStatus = ['Ready', 'In progress', 'Ready', 'Ready', 'Ready'];
 
 export const StudentPortal: React.FC<StudentPortalProps> = ({
   user,
@@ -29,507 +42,290 @@ export const StudentPortal: React.FC<StudentPortalProps> = ({
   currentTab,
   onSelectTab,
   onOpenMobileMenu,
-  onOpenAdminModal,
 }) => {
-  const [notificationOpen, setNotificationOpen] = useState(false);
+  const recent = program.recentActivity[0];
 
-  // If user is enrolled in German Language, use the specialized GermanPortalWorkspace
-  // which strictly enforces CEFR Level Isolation (Section 1, 10, 11)
-  if (user.assignedProgram === 'GERMAN') {
-    const germanLevel = user.germanLevel || 'A1';
-
-    return (
-      <div className="flex-1 flex flex-col min-w-0 bg-[#F8FAFC]">
-        {/* Top Bar */}
-        <header className="bg-white border-b border-slate-200 py-3 px-6 sticky top-0 z-10 flex items-center justify-between">
-          <div className="flex items-center gap-4">
-            <button
-              onClick={onOpenMobileMenu}
-              className="md:hidden p-1.5 rounded-lg text-slate-600 hover:bg-slate-100"
-            >
-              <Menu className="w-5 h-5" />
-            </button>
-
-            <div className="flex items-center gap-2">
-              <span className="font-bold text-[#0F172A] text-sm hidden sm:inline">
-                AECS Learning Center
-              </span>
-              <span className="text-slate-300 hidden sm:inline">/</span>
-              <span className="text-xs font-bold text-[#EA580C] uppercase tracking-wide">
-                German Language &bull; Level {germanLevel}
-              </span>
-            </div>
+  const renderHeader = () => (
+    <header className="sticky top-0 z-20 border-b border-[var(--color-line)] bg-[color:var(--color-paper)/0.94] px-4 py-3 backdrop-blur sm:px-6">
+      <div className="mx-auto flex max-w-[1440px] items-center justify-between gap-4">
+        <div className="flex min-w-0 items-center gap-3">
+          <button
+            type="button"
+            onClick={onOpenMobileMenu}
+            className="alc-button-quiet md:hidden"
+            aria-label="Open navigation"
+          >
+            <Menu className="h-5 w-5" aria-hidden="true" />
+          </button>
+          <div className="min-w-0">
+            <p className="alc-label truncate">{program.name}</p>
+            <p className="truncate text-sm font-semibold text-[var(--color-ink)]">
+              {tabTitles[currentTab]}
+            </p>
           </div>
-
-          <div className="flex items-center gap-3">
-            {/* Notifications */}
-            <div className="relative">
-              <button
-                onClick={() => setNotificationOpen(!notificationOpen)}
-                className="p-2 rounded-lg text-slate-500 hover:text-slate-900 hover:bg-slate-100 relative transition-colors"
-                title="German Notifications"
-              >
-                <Bell className="w-4 h-4" />
-                <span className="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-[#EA580C]" />
-              </button>
-
-              {notificationOpen && (
-                <div className="absolute right-0 mt-2 w-72 bg-white rounded-xl shadow-lg border border-slate-200 p-3 z-30 text-xs">
-                  <div className="font-bold text-[#0F172A] pb-2 border-b border-slate-100">
-                    German {germanLevel} Updates
-                  </div>
-                  <div className="py-2 space-y-2">
-                    <div className="text-[11px] text-slate-700">
-                      <span className="font-semibold block text-[#0F172A]">
-                        Sprechen Record &amp; Replay Available
-                      </span>
-                      <span className="text-slate-400">German Level {germanLevel}</span>
-                    </div>
-                  </div>
-                </div>
-              )}
-            </div>
-
-            {/* Student Profile / Avatar */}
-            <div
-              onClick={() => onSelectTab('profile')}
-              className="flex items-center gap-2 pl-3 border-l border-slate-200 cursor-pointer group"
-            >
-              <div className="w-8 h-8 rounded-full bg-[#0F172A] text-white flex items-center justify-center font-bold text-xs uppercase shadow-xs group-hover:ring-2 group-hover:ring-[#EA580C]">
-                {user.fullName.charAt(0)}
-              </div>
-              <div className="hidden sm:block text-left">
-                <div className="text-xs font-bold text-[#0F172A] group-hover:text-[#EA580C] leading-tight">
-                  {user.fullName}
-                </div>
-                <div className="text-[10px] text-slate-400 font-medium">
-                  German {germanLevel} (Isolated)
-                </div>
-              </div>
-            </div>
-          </div>
-        </header>
-
-        {/* German Specialized Learning Workspace */}
-        <main className="flex-1 p-6 max-w-7xl w-full mx-auto">
-          <GermanPortalWorkspace
-            user={user}
-            currentTab={currentTab}
-            onSelectTab={onSelectTab}
-          />
-        </main>
+        </div>
+        <button
+          type="button"
+          onClick={() => onSelectTab('profile')}
+          className="flex min-h-11 items-center gap-3 rounded-[var(--radius-control)] px-2 text-left hover:bg-[var(--color-surface)]"
+          aria-label={`Open profile for ${user.fullName}`}
+        >
+          <span className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-[var(--color-navy)] text-sm font-bold text-white">
+            {user.fullName.charAt(0)}
+          </span>
+          <span className="hidden sm:block">
+            <span className="block text-sm font-semibold text-[var(--color-ink)]">{user.fullName}</span>
+            <span className="block text-xs text-[var(--color-muted)]">Sample learner</span>
+          </span>
+        </button>
       </div>
-    );
-  }
+    </header>
+  );
 
-  // If user is enrolled in IELTS, render dedicated computer-delivered simulation workspace
-  if (user.assignedProgram === 'IELTS') {
-    return (
-      <div className="flex-1 flex flex-col min-w-0 bg-[#F8FAFC]">
-        {/* Top Bar */}
-        <header className="bg-white border-b border-slate-200 py-3 px-6 sticky top-0 z-10 flex items-center justify-between">
-          <div className="flex items-center gap-4">
-            <button
-              onClick={onOpenMobileMenu}
-              className="md:hidden p-1.5 rounded-lg text-slate-600 hover:bg-slate-100"
-            >
-              <Menu className="w-5 h-5" />
-            </button>
+  const pageIntro = (eyebrow: string, title: string, copy: string) => (
+    <div className="max-w-3xl">
+      <p className="alc-label">{eyebrow}</p>
+      <h1 className="mt-2 text-3xl font-semibold tracking-[-0.035em] text-[var(--color-ink)] sm:text-4xl">
+        {title}
+      </h1>
+      <p className="mt-3 max-w-2xl text-sm leading-6 text-[var(--color-muted)]">{copy}</p>
+    </div>
+  );
 
-            <div className="flex items-center gap-2">
-              <span className="font-bold text-[#0F172A] text-sm hidden sm:inline">
-                AECS Learning Center
-              </span>
-              <span className="text-slate-300 hidden sm:inline">/</span>
-              <span className="text-xs font-bold text-[#EA580C] uppercase tracking-wide">
-                IELTS Academic Test Simulation
-              </span>
-            </div>
-          </div>
-
-          <div className="flex items-center gap-3">
-            <div
-              onClick={() => onSelectTab('profile')}
-              className="flex items-center gap-2 pl-3 border-l border-slate-200 cursor-pointer group"
-            >
-              <div className="w-8 h-8 rounded-full bg-[#0F172A] text-white flex items-center justify-center font-bold text-xs uppercase shadow-xs group-hover:ring-2 group-hover:ring-[#EA580C]">
-                {user.fullName.charAt(0)}
-              </div>
-              <div className="hidden sm:block text-left">
-                <div className="text-xs font-bold text-[#0F172A] group-hover:text-[#EA580C] leading-tight">
-                  {user.fullName}
-                </div>
-                <div className="text-[10px] text-slate-400 font-medium">
-                  IELTS Academic (Isolated)
-                </div>
+  const renderStandardContent = () => {
+    if (currentTab === 'dashboard') {
+      return (
+        <div className="space-y-8">
+          <section className="grid gap-5 lg:grid-cols-[minmax(0,1.55fr)_minmax(17rem,0.75fr)]">
+            <div className="alc-panel p-6 sm:p-8">
+              <p className="alc-label">Today’s study plan</p>
+              <h1 className="mt-3 max-w-2xl text-3xl font-semibold tracking-[-0.04em] text-[var(--color-ink)] sm:text-5xl">
+                Build exam confidence, one focused session at a time.
+              </h1>
+              <p className="mt-4 max-w-2xl text-sm leading-6 text-[var(--color-muted)]">
+                {program.welcomeMessage} This public preview uses fictional progress data and does not save coursework.
+              </p>
+              <div className="mt-7 flex flex-wrap gap-3">
+                <button type="button" className="alc-button-primary" onClick={() => onSelectTab('practice')}>
+                  Continue practice <ArrowRight className="h-4 w-4" aria-hidden="true" />
+                </button>
+                <button type="button" className="alc-button-secondary" onClick={() => onSelectTab('learn')}>
+                  Browse curriculum
+                </button>
               </div>
             </div>
-          </div>
-        </header>
-
-        {/* IELTS Specialized Computer-Delivered Workspace */}
-        <main className="flex-1 p-6 max-w-7xl w-full mx-auto">
-          <IeltsPortalWorkspace
-            user={user}
-            currentTab={currentTab}
-            onSelectTab={onSelectTab}
-          />
-        </main>
-      </div>
-    );
-  }
-
-  // STANDARD PORTAL SHELL FOR PTE, DET (Isolated to their respective learning areas)
-  const renderTabContent = () => {
-    switch (currentTab) {
-      case 'dashboard':
-        return (
-          <div className="space-y-6">
-            {/* Welcome block */}
-            <div className="bg-white p-6 rounded-xl border border-slate-200 shadow-xs flex flex-col md:flex-row md:items-center justify-between gap-4">
+            <aside className="alc-panel flex flex-col justify-between bg-[var(--color-navy)] p-6 text-white">
               <div>
-                <div className="flex items-center gap-2">
-                  <span className="text-xs font-bold text-[#EA580C] uppercase tracking-wider">
-                    Assigned Portal Scope
-                  </span>
-                  <span className="text-[10px] bg-slate-100 text-slate-600 px-2 py-0.5 rounded font-mono">
-                    ID: {user.id}
-                  </span>
-                </div>
-                <h1 className="text-2xl font-bold text-[#0F172A] mt-1 tracking-tight">
-                  Welcome back, {user.fullName}
-                </h1>
-                <p className="text-xs text-slate-600 mt-1 max-w-2xl leading-relaxed">
-                  {program.welcomeMessage}
-                </p>
+                <p className="alc-label text-orange-300">Active pathway</p>
+                <h2 className="mt-3 text-2xl font-semibold text-white">{program.name}</h2>
+                <p className="mt-2 text-sm leading-6 text-slate-300">{program.fullName}</p>
               </div>
-
-              {/* Program Card - Prominently displayed without program switch control */}
-              <div className="bg-slate-900 text-white p-5 rounded-xl shrink-0 min-w-[240px] border border-slate-800 shadow-sm relative overflow-hidden">
-                <div className="absolute right-0 top-0 w-24 h-24 bg-[#EA580C]/10 rounded-full blur-xl pointer-events-none" />
-                <div className="text-[10px] uppercase font-bold text-[#EA580C] tracking-wider">
-                  Active Enrolled Program
-                </div>
-                <div className="text-lg font-bold mt-0.5 tracking-tight flex items-center gap-1.5">
-                  <span>{program.name}</span>
-                </div>
-                <div className="text-[11px] text-slate-300 mt-1">
-                  {program.badge}
-                </div>
-                <div className="mt-3 pt-2.5 border-t border-slate-800 flex items-center justify-between text-[11px] text-slate-400">
-                  <span>Switching:</span>
-                  <span className="font-semibold text-amber-400">Locked to Student</span>
-                </div>
-              </div>
-            </div>
-
-            {/* Quick Actions Grid */}
-            <div>
-              <div className="text-xs font-bold text-slate-700 uppercase tracking-wider mb-2.5">
-                Quick Actions
-              </div>
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-                <button
-                  onClick={() => onSelectTab('learn')}
-                  className="bg-white p-4 rounded-xl border border-slate-200 hover:border-[#EA580C] hover:shadow-xs transition-all text-left group"
-                >
-                  <div className="w-8 h-8 rounded-lg bg-orange-50 text-[#EA580C] flex items-center justify-center mb-2.5">
-                    <BookOpen className="w-4 h-4" />
-                  </div>
-                  <div className="text-xs font-bold text-[#0F172A] group-hover:text-[#EA580C]">
-                    Learn Curriculum
-                  </div>
-                  <div className="text-[11px] text-slate-500 mt-0.5">
-                    Modules &amp; Lessons
-                  </div>
-                </button>
-
-                <button
-                  onClick={() => onSelectTab('practice')}
-                  className="bg-white p-4 rounded-xl border border-slate-200 hover:border-[#EA580C] hover:shadow-xs transition-all text-left group"
-                >
-                  <div className="w-8 h-8 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center mb-2.5">
-                    <PenTool className="w-4 h-4" />
-                  </div>
-                  <div className="text-xs font-bold text-[#0F172A] group-hover:text-[#EA580C]">
-                    Practice Drills
-                  </div>
-                  <div className="text-[11px] text-slate-500 mt-0.5">
-                    Targeted Skill Sets
-                  </div>
-                </button>
-
-                <button
-                  onClick={() => onSelectTab('mock-tests')}
-                  className="bg-white p-4 rounded-xl border border-slate-200 hover:border-[#EA580C] hover:shadow-xs transition-all text-left group"
-                >
-                  <div className="w-8 h-8 rounded-lg bg-purple-50 text-purple-600 flex items-center justify-center mb-2.5">
-                    <FileCheck2 className="w-4 h-4" />
-                  </div>
-                  <div className="text-xs font-bold text-[#0F172A] group-hover:text-[#EA580C]">
-                    Mock Tests
-                  </div>
-                  <div className="text-[11px] text-slate-500 mt-0.5">
-                    Full Exam Format
-                  </div>
-                </button>
-
-                <button
-                  onClick={() => onSelectTab('progress')}
-                  className="bg-white p-4 rounded-xl border border-slate-200 hover:border-[#EA580C] hover:shadow-xs transition-all text-left group"
-                >
-                  <div className="w-8 h-8 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center mb-2.5">
-                    <TrendingUp className="w-4 h-4" />
-                  </div>
-                  <div className="text-xs font-bold text-[#0F172A] group-hover:text-[#EA580C]">
-                    View Progress
-                  </div>
-                  <div className="text-[11px] text-slate-500 mt-0.5">
-                    Track Milestones
-                  </div>
-                </button>
-              </div>
-            </div>
-
-            {/* Program-Specific Available Learning Areas */}
-            <div className="bg-white p-6 rounded-xl border border-slate-200 shadow-xs">
-              <div className="flex items-center justify-between mb-4">
+              <dl className="mt-8 grid grid-cols-2 gap-4 border-t border-white/15 pt-5">
                 <div>
-                  <h2 className="text-sm font-bold text-[#0F172A] uppercase tracking-wider">
-                    {program.name} Learning Areas
-                  </h2>
-                  <p className="text-xs text-slate-500 mt-0.5">
-                    Strictly isolated to {program.name} curriculum. No cross-program content exposed.
-                  </p>
+                  <dt className="text-xs text-slate-400">{program.quickStats.targetMetric}</dt>
+                  <dd className="mt-1 text-lg font-semibold">{program.quickStats.targetValue}</dd>
                 </div>
-                <span className="text-xs font-bold text-[#EA580C]">
-                  {program.learningAreas.length} Areas Configured
-                </span>
-              </div>
-
-              <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-3">
-                {program.learningAreas.map((area, idx) => (
-                  <div
-                    key={area}
-                    className="p-3.5 rounded-lg border border-slate-200 bg-slate-50/50 hover:bg-white hover:border-[#EA580C] transition-all group"
-                  >
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-2">
-                        <span className="w-5 h-5 rounded-full bg-slate-200 text-slate-700 text-[10px] font-bold flex items-center justify-center group-hover:bg-orange-100 group-hover:text-[#EA580C]">
-                          {idx + 1}
-                        </span>
-                        <span className="text-xs font-bold text-[#0F172A]">
-                          {area}
-                        </span>
-                      </div>
-                      <ChevronRight className="w-3.5 h-3.5 text-slate-400 group-hover:text-[#EA580C]" />
-                    </div>
-                    <div className="mt-2 text-[11px] text-slate-500">
-                      Standard modules &amp; exercises aligned with {program.name} specifications.
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {/* Continue Learning */}
-            <div className="bg-white p-6 rounded-xl border border-slate-200 shadow-xs space-y-4">
-              <div className="flex items-center justify-between border-b border-slate-100 pb-3">
-                <div className="text-xs font-bold text-[#0F172A] uppercase tracking-wider">
-                  Continue Learning
-                </div>
-                <span className="text-[11px] text-slate-400">Most recent lesson</span>
-              </div>
-
-              <div className="p-4 rounded-lg bg-orange-50/40 border border-orange-200/80 flex items-start justify-between gap-4">
                 <div>
-                  <span className="inline-block text-[10px] font-bold uppercase tracking-wider text-[#EA580C] bg-orange-100 px-2 py-0.5 rounded mb-1">
-                    In Progress
+                  <dt className="text-xs text-slate-400">Study plan</dt>
+                  <dd className="mt-1 text-lg font-semibold">{program.quickStats.hoursPledged}</dd>
+                </div>
+              </dl>
+            </aside>
+          </section>
+
+          <section aria-labelledby="workspace-heading">
+            <div className="mb-4 flex items-end justify-between gap-4">
+              <div>
+                <p className="alc-label">Workspace</p>
+                <h2 id="workspace-heading" className="mt-1 text-2xl font-semibold text-[var(--color-ink)]">Pick up where you left off</h2>
+              </div>
+              <span className="hidden text-sm text-[var(--color-muted)] sm:block">{program.learningAreas.length} skill areas</span>
+            </div>
+            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-[1.15fr_1fr_1fr]">
+              {[
+                { tab: 'learn' as const, icon: BookOpen, title: 'Learn', copy: 'Review concepts and exam structure.' },
+                { tab: 'practice' as const, icon: Play, title: 'Practice', copy: 'Try short, skill-specific activities.' },
+                { tab: 'mock-tests' as const, icon: FileCheck2, title: 'Mock tests', copy: 'Preview the full test workflow.' },
+              ].map(({ tab, icon: Icon, title, copy }) => (
+                <button key={tab} type="button" onClick={() => onSelectTab(tab)} className="alc-panel group p-5 text-left hover:border-[var(--color-accent)]">
+                  <Icon className="h-5 w-5 text-[var(--color-accent)]" aria-hidden="true" />
+                  <span className="mt-7 block text-lg font-semibold text-[var(--color-ink)]">{title}</span>
+                  <span className="mt-1 block text-sm leading-6 text-[var(--color-muted)]">{copy}</span>
+                  <span className="mt-5 inline-flex items-center gap-2 text-sm font-semibold text-[var(--color-ink)]">
+                    Open <ArrowRight className="h-4 w-4 group-hover:translate-x-0.5" aria-hidden="true" />
                   </span>
-                  <h4 className="text-xs font-bold text-[#0F172A]">
-                    {program.recentActivity[0]?.title || 'Orientation Module'}
-                  </h4>
-                  <p className="text-[11px] text-slate-600 mt-1">
-                    Section: {program.recentActivity[0]?.area || program.learningAreas[0]}
-                  </p>
-                </div>
-                <button
-                  onClick={() => onSelectTab('practice')}
-                  className="shrink-0 py-1.5 px-3 bg-[#0F172A] hover:bg-slate-800 text-white text-xs font-semibold rounded-lg flex items-center gap-1 shadow-xs transition-colors"
-                >
-                  <span>Resume</span>
-                  <ArrowRight className="w-3.5 h-3.5" />
                 </button>
-              </div>
-            </div>
-          </div>
-        );
-
-      case 'learn':
-        return (
-          <div className="bg-white p-6 rounded-xl border border-slate-200 shadow-xs space-y-6">
-            <div>
-              <span className="text-xs font-bold text-[#EA580C] uppercase tracking-wider">
-                Curriculum Structure
-              </span>
-              <h2 className="text-xl font-bold text-[#0F172A] mt-1">
-                {program.name} Learning Modules
-              </h2>
-            </div>
-            <div className="grid gap-3">
-              {program.learningAreas.map((area, idx) => (
-                <div key={area} className="p-4 rounded-xl border border-slate-200 flex items-center justify-between">
-                  <div>
-                    <div className="text-xs font-bold text-[#0F172A]">{area}</div>
-                    <div className="text-[11px] text-slate-500">Curated modules for {program.name}</div>
-                  </div>
-                  <button className="py-1 px-3 text-xs font-semibold rounded-md bg-slate-100 hover:bg-[#0F172A] hover:text-white">
-                    Start Module
-                  </button>
-                </div>
               ))}
             </div>
-          </div>
-        );
+          </section>
 
-      case 'practice':
-        return (
-          <div className="bg-white p-6 rounded-xl border border-slate-200 shadow-xs space-y-6">
+          <section className="alc-panel grid gap-6 p-6 md:grid-cols-[minmax(0,1fr)_auto] md:items-center">
             <div>
-              <span className="text-xs font-bold text-[#EA580C] uppercase tracking-wider">
-                Practice Drills
-              </span>
-              <h2 className="text-xl font-bold text-[#0F172A] mt-1">
-                {program.name} Skill Drills
-              </h2>
+              <p className="alc-label">Recent activity</p>
+              <h2 className="mt-2 text-xl font-semibold text-[var(--color-ink)]">{recent?.title ?? 'Orientation module'}</h2>
+              <p className="mt-2 text-sm text-[var(--color-muted)]">{recent?.area ?? program.learningAreas[0]} · Fictional demo history</p>
             </div>
-            <div className="grid sm:grid-cols-2 gap-4">
-              {program.learningAreas.map((area) => (
-                <div key={area} className="p-4 rounded-xl border border-slate-200">
-                  <div className="text-xs font-bold text-[#0F172A]">{area} Drills</div>
-                  <div className="text-[11px] text-slate-500 mt-1">12 practice sets configured for {program.name}.</div>
-                </div>
-              ))}
-            </div>
-          </div>
-        );
-
-      case 'mock-tests':
-        return (
-          <div className="bg-white p-6 rounded-xl border border-slate-200 shadow-xs space-y-6">
-            <div>
-              <span className="text-xs font-bold text-[#EA580C] uppercase tracking-wider">
-                Simulation
-              </span>
-              <h2 className="text-xl font-bold text-[#0F172A] mt-1">
-                {program.mockTestLabel}
-              </h2>
-            </div>
-            <div className="space-y-3">
-              {[1, 2].map((n) => (
-                <div key={n} className="p-4 rounded-xl border border-slate-200 flex items-center justify-between">
-                  <div className="text-xs font-bold text-[#0F172A]">{program.name} Official Simulation {n}</div>
-                  <button className="py-1.5 px-3 bg-[#0F172A] text-white rounded-lg text-xs font-semibold">Start Test</button>
-                </div>
-              ))}
-            </div>
-          </div>
-        );
-
-      case 'profile':
-        return (
-          <div className="bg-white p-6 rounded-xl border border-slate-200 shadow-xs space-y-4 max-w-xl text-xs">
-            <h2 className="text-xl font-bold text-[#0F172A]">Student Profile</h2>
-            <div className="space-y-2">
-              <div className="flex justify-between py-1 border-b border-slate-100">
-                <span className="text-slate-500">Name:</span>
-                <span className="font-bold text-[#0F172A]">{user.fullName}</span>
-              </div>
-              <div className="flex justify-between py-1 border-b border-slate-100">
-                <span className="text-slate-500">Email:</span>
-                <span className="font-bold text-[#0F172A]">{user.email}</span>
-              </div>
-              <div className="flex justify-between py-1 border-b border-slate-100">
-                <span className="text-slate-500">Assigned Program:</span>
-                <span className="font-bold text-[#EA580C]">{program.name}</span>
-              </div>
-            </div>
-            <div className="pt-2">
-              <button
-                onClick={onOpenAdminModal}
-                className="py-1.5 px-3 bg-[#0F172A] text-white rounded-lg text-xs font-semibold"
-              >
-                Open Admin Program Desk
-              </button>
-            </div>
-          </div>
-        );
-
-      default:
-        return (
-          <div className="bg-white p-6 rounded-xl border border-slate-200 text-xs">
-            {currentTab.toUpperCase()} View for {program.name}.
-          </div>
-        );
+            <button type="button" className="alc-button-secondary" onClick={() => onSelectTab('progress')}>View progress</button>
+          </section>
+        </div>
+      );
     }
+
+    if (currentTab === 'learn' || currentTab === 'practice') {
+      const practice = currentTab === 'practice';
+      return (
+        <div className="space-y-7">
+          {pageIntro(
+            practice ? 'Skill drills' : 'Curriculum',
+            practice ? `${program.name} practice` : `${program.name} learning path`,
+            practice
+              ? 'Choose a skill area to preview the interaction pattern. Answers and attempts remain in this browser session only.'
+              : 'A clear progression from fundamentals to test-day strategy, presented as a product demonstration.',
+          )}
+          <div className="alc-panel divide-y divide-[var(--color-line)]">
+            {program.learningAreas.map((area, index) => (
+              <article key={area} className="grid gap-4 p-5 sm:grid-cols-[2.25rem_minmax(0,1fr)_auto] sm:items-center">
+                <span className="grid h-9 w-9 place-items-center rounded-full bg-[var(--color-surface)] font-mono text-xs font-semibold text-[var(--color-muted)]">
+                  {String(index + 1).padStart(2, '0')}
+                </span>
+                <div>
+                  <h2 className="text-base font-semibold text-[var(--color-ink)]">{area}</h2>
+                  <p className="mt-1 text-sm text-[var(--color-muted)]">
+                    {practice ? 'A short sample drill with immediate feedback.' : 'Concept guide, examples, and test strategy.'}
+                  </p>
+                </div>
+                <span className="alc-status w-fit">{areaStatus[index] ?? 'Ready'}</span>
+              </article>
+            ))}
+          </div>
+        </div>
+      );
+    }
+
+    if (currentTab === 'mock-tests') {
+      return (
+        <div className="space-y-7">
+          {pageIntro('Simulation preview', program.mockTestLabel, 'Review the structure and timing before starting. This demo does not provide accredited scoring or persist attempts.')}
+          <div className="grid gap-4 md:grid-cols-2">
+            {[1, 2].map((number) => (
+              <article key={number} className="alc-panel p-6">
+                <FileCheck2 className="h-6 w-6 text-[var(--color-accent)]" aria-hidden="true" />
+                <h2 className="mt-6 text-xl font-semibold text-[var(--color-ink)]">Practice form {number}</h2>
+                <div className="mt-4 flex flex-wrap gap-x-5 gap-y-2 text-sm text-[var(--color-muted)]">
+                  <span className="inline-flex items-center gap-2"><Clock3 className="h-4 w-4" aria-hidden="true" /> Timed preview</span>
+                  <span className="inline-flex items-center gap-2"><CheckCircle2 className="h-4 w-4" aria-hidden="true" /> Sample content</span>
+                </div>
+                <button type="button" className="alc-button-secondary mt-6" disabled title="Interactive mock tests are not connected in this public preview">
+                  Preview only
+                </button>
+              </article>
+            ))}
+          </div>
+        </div>
+      );
+    }
+
+    if (currentTab === 'progress') {
+      return (
+        <div className="space-y-7">
+          {pageIntro('Demo progress', 'A calmer view of your study rhythm', 'All values below are fictional examples. A production portal would calculate these from authenticated, server-side attempt data.')}
+          <div className="grid gap-4 sm:grid-cols-3">
+            {[
+              ['Sessions', '8', CalendarDays],
+              ['Practice hours', '6.5', Clock3],
+              ['Modules sampled', `${Math.min(3, program.learningAreas.length)} / ${program.learningAreas.length}`, TrendingUp],
+            ].map(([label, value, Icon]) => {
+              const MetricIcon = Icon as typeof CalendarDays;
+              return (
+                <div key={label as string} className="alc-panel p-5">
+                  <MetricIcon className="h-5 w-5 text-[var(--color-accent)]" aria-hidden="true" />
+                  <p className="mt-6 text-3xl font-semibold text-[var(--color-ink)]">{value as string}</p>
+                  <p className="mt-1 text-sm text-[var(--color-muted)]">{label as string}</p>
+                </div>
+              );
+            })}
+          </div>
+          <div className="alc-panel p-6">
+            <h2 className="text-lg font-semibold text-[var(--color-ink)]">Recent sample activity</h2>
+            <div className="mt-4 divide-y divide-[var(--color-line)]">
+              {program.recentActivity.map((item) => (
+                <div key={item.id} className="flex flex-col gap-1 py-4 sm:flex-row sm:items-center sm:justify-between">
+                  <div>
+                    <p className="text-sm font-semibold text-[var(--color-ink)]">{item.title}</p>
+                    <p className="text-xs text-[var(--color-muted)]">{item.area}</p>
+                  </div>
+                  <span className="text-xs text-[var(--color-muted)]">{item.time}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+    if (currentTab === 'resources') {
+      return (
+        <div className="space-y-7">
+          {pageIntro('Reference library', `${program.name} resources`, 'A concise set of orientation materials for the public prototype. Downloadable course files require a connected learning platform.')}
+          <div className="alc-panel divide-y divide-[var(--color-line)]">
+            {['Test format overview', 'Weekly study planner', 'Speaking and writing checklist'].map((resource, index) => (
+              <div key={resource} className="flex items-center gap-4 p-5">
+                <Library className="h-5 w-5 shrink-0 text-[var(--color-accent)]" aria-hidden="true" />
+                <div className="min-w-0 flex-1">
+                  <p className="font-semibold text-[var(--color-ink)]">{resource}</p>
+                  <p className="mt-1 text-sm text-[var(--color-muted)]">Reference {String(index + 1).padStart(2, '0')} · Preview description</p>
+                </div>
+                <span className="alc-status hidden sm:inline-flex">Preview</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      );
+    }
+
+    return (
+      <div className="space-y-7">
+        {pageIntro('Sample profile', user.fullName, 'This fictional profile is provided to demonstrate the portal interface. It is not an authenticated account.')}
+        <div className="alc-panel max-w-2xl p-6">
+          <div className="flex items-center gap-4 border-b border-[var(--color-line)] pb-6">
+            <span className="grid h-14 w-14 place-items-center rounded-full bg-[var(--color-navy)] text-xl font-semibold text-white">
+              {user.fullName.charAt(0)}
+            </span>
+            <div>
+              <h2 className="text-xl font-semibold text-[var(--color-ink)]">{user.fullName}</h2>
+              <p className="text-sm text-[var(--color-muted)]">{user.email}</p>
+            </div>
+          </div>
+          <dl className="mt-2 divide-y divide-[var(--color-line)]">
+            <div className="grid gap-1 py-4 sm:grid-cols-[10rem_1fr]">
+              <dt className="text-sm text-[var(--color-muted)]">Program</dt>
+              <dd className="text-sm font-semibold text-[var(--color-ink)]">{program.name}</dd>
+            </div>
+            <div className="grid gap-1 py-4 sm:grid-cols-[10rem_1fr]">
+              <dt className="text-sm text-[var(--color-muted)]">Profile type</dt>
+              <dd className="text-sm font-semibold text-[var(--color-ink)]">Fictional demo learner</dd>
+            </div>
+            <div className="grid gap-1 py-4 sm:grid-cols-[10rem_1fr]">
+              <dt className="text-sm text-[var(--color-muted)]">Data storage</dt>
+              <dd className="text-sm font-semibold text-[var(--color-ink)]">Selection only, for this browser session</dd>
+            </div>
+          </dl>
+        </div>
+      </div>
+    );
   };
 
   return (
-    <div className="flex-1 flex flex-col min-w-0 bg-[#F8FAFC]">
-      {/* Top Bar */}
-      <header className="bg-white border-b border-slate-200 py-3 px-6 sticky top-0 z-10 flex items-center justify-between">
-        <div className="flex items-center gap-4">
-          <button
-            onClick={onOpenMobileMenu}
-            className="md:hidden p-1.5 rounded-lg text-slate-600 hover:bg-slate-100"
-          >
-            <Menu className="w-5 h-5" />
-          </button>
-
-          <div className="flex items-center gap-2">
-            <span className="font-bold text-[#0F172A] text-sm hidden sm:inline">
-              AECS Learning Center
-            </span>
-            <span className="text-slate-300 hidden sm:inline">/</span>
-            <span className="text-xs font-bold text-[#EA580C] uppercase tracking-wide">
-              {program.name}
-            </span>
-          </div>
-        </div>
-
-        <div className="flex items-center gap-3">
-          <div className="relative">
-            <button
-              onClick={() => setNotificationOpen(!notificationOpen)}
-              className="p-2 rounded-lg text-slate-500 hover:text-slate-900 hover:bg-slate-100 relative transition-colors"
-            >
-              <Bell className="w-4 h-4" />
-              <span className="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-[#EA580C]" />
-            </button>
-          </div>
-
-          <div
-            onClick={() => onSelectTab('profile')}
-            className="flex items-center gap-2 pl-3 border-l border-slate-200 cursor-pointer group"
-          >
-            <div className="w-8 h-8 rounded-full bg-[#0F172A] text-white flex items-center justify-center font-bold text-xs uppercase shadow-xs group-hover:ring-2 group-hover:ring-[#EA580C]">
-              {user.fullName.charAt(0)}
-            </div>
-            <div className="hidden sm:block text-left">
-              <div className="text-xs font-bold text-[#0F172A] group-hover:text-[#EA580C] leading-tight">
-                {user.fullName}
-              </div>
-              <div className="text-[10px] text-slate-400 font-medium">
-                Student &bull; {program.name}
-              </div>
-            </div>
-          </div>
-        </div>
-      </header>
-
-      {/* Main Workspace */}
-      <main className="flex-1 p-6 max-w-7xl w-full mx-auto">
-        {renderTabContent()}
+    <div className="flex min-w-0 flex-1 flex-col bg-[var(--color-paper)]">
+      {renderHeader()}
+      <main className="mx-auto w-full max-w-[1440px] flex-1 px-4 py-6 sm:px-6 sm:py-8 lg:px-10">
+        {user.assignedProgram === 'GERMAN' ? (
+          <GermanPortalWorkspace user={user} currentTab={currentTab} onSelectTab={onSelectTab} />
+        ) : user.assignedProgram === 'IELTS' ? (
+          <IeltsPortalWorkspace user={user} currentTab={currentTab} onSelectTab={onSelectTab} />
+        ) : (
+          renderStandardContent()
+        )}
       </main>
     </div>
   );

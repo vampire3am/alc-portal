@@ -1,0 +1,12 @@
+{
+  "version": 1,
+  "entries": [
+    {
+      "route": "app",
+      "genre": "modern-minimal",
+      "macrostructure": "Workbench",
+      "designSystem": "design.md",
+      "designedAsApp": true
+    }
+  ]
+}

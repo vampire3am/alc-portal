@@ -11,7 +11,6 @@ export interface UserAccount {
   germanLevel?: GermanLevel;
   ieltsTrack?: IeltsTrack;
   registrationDate: string;
-  role: 'student' | 'admin';
 }
 
 export interface ProgramConfig {

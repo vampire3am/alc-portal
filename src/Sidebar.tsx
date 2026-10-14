@@ -1,150 +1,130 @@
-import React from 'react';
-import { ViewTab } from './types';
-import { 
-  LayoutDashboard, 
-  BookOpen, 
-  PenTool, 
-  FileCheck2, 
-  TrendingUp, 
-  FolderArchive, 
-  User, 
-  LogOut,
-  ShieldAlert,
+import React, { useEffect, useRef } from 'react';
+import {
+  BookOpen,
   ChevronRight,
-  ExternalLink
+  FileCheck2,
+  FolderArchive,
+  LayoutDashboard,
+  LogOut,
+  Menu,
+  PenTool,
+  TrendingUp,
+  User,
+  X,
 } from 'lucide-react';
+import type { ViewTab } from './types';
 
 interface SidebarProps {
   currentTab: ViewTab;
   onSelectTab: (tab: ViewTab) => void;
   programName: string;
   onLogout: () => void;
-  onSimulateUnauthorizedUrl: () => void;
-  onOpenAdminModal: () => void;
   isMobileOpen: boolean;
   onCloseMobile: () => void;
 }
+
+const navItems: Array<{ id: ViewTab; label: string; icon: React.ReactNode }> = [
+  { id: 'dashboard', label: 'Overview', icon: <LayoutDashboard className="h-4 w-4" /> },
+  { id: 'learn', label: 'Learn', icon: <BookOpen className="h-4 w-4" /> },
+  { id: 'practice', label: 'Practice', icon: <PenTool className="h-4 w-4" /> },
+  { id: 'mock-tests', label: 'Mock tests', icon: <FileCheck2 className="h-4 w-4" /> },
+  { id: 'progress', label: 'Progress', icon: <TrendingUp className="h-4 w-4" /> },
+  { id: 'resources', label: 'Resources', icon: <FolderArchive className="h-4 w-4" /> },
+  { id: 'profile', label: 'Profile', icon: <User className="h-4 w-4" /> },
+];
 
 export const Sidebar: React.FC<SidebarProps> = ({
   currentTab,
   onSelectTab,
   programName,
   onLogout,
-  onSimulateUnauthorizedUrl,
-  onOpenAdminModal,
   isMobileOpen,
   onCloseMobile,
 }) => {
-  const navItems: Array<{ id: ViewTab; label: string; icon: React.ReactNode }> = [
-    { id: 'dashboard', label: 'Dashboard', icon: <LayoutDashboard className="w-4 h-4" /> },
-    { id: 'learn', label: 'Learn', icon: <BookOpen className="w-4 h-4" /> },
-    { id: 'practice', label: 'Practice', icon: <PenTool className="w-4 h-4" /> },
-    { id: 'mock-tests', label: 'Mock Tests / Exams', icon: <FileCheck2 className="w-4 h-4" /> },
-    { id: 'progress', label: 'Progress', icon: <TrendingUp className="w-4 h-4" /> },
-    { id: 'resources', label: 'Resources', icon: <FolderArchive className="w-4 h-4" /> },
-    { id: 'profile', label: 'Profile', icon: <User className="w-4 h-4" /> },
-  ];
+  const closeButtonRef = useRef<HTMLButtonElement>(null);
 
-  const sidebarContent = (
-    <div className="flex flex-col h-full bg-[#0F172A] text-slate-300 w-64 border-r border-slate-800 select-none">
-      {/* Brand Header */}
-      <div className="p-4 border-b border-slate-800 flex items-center justify-between">
-        <div className="flex items-center gap-2.5">
-          <div className="w-8 h-8 rounded-lg bg-[#EA580C] text-white flex items-center justify-center font-bold text-sm tracking-wider shadow">
+  useEffect(() => {
+    if (!isMobileOpen) return;
+    closeButtonRef.current?.focus();
+    const closeOnEscape = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') onCloseMobile();
+    };
+    window.addEventListener('keydown', closeOnEscape);
+    return () => window.removeEventListener('keydown', closeOnEscape);
+  }, [isMobileOpen, onCloseMobile]);
+
+  const choose = (tab: ViewTab) => {
+    onSelectTab(tab);
+    onCloseMobile();
+  };
+
+  const content = (
+    <div className="flex h-full w-64 flex-col border-r border-white/10 bg-[var(--color-ink)] text-white">
+      <div className="flex min-h-16 items-center justify-between border-b border-white/10 px-4">
+        <div className="flex items-center gap-3">
+          <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-[var(--color-accent)] font-display text-sm font-bold">
             ALC
           </div>
           <div>
-            <div className="text-white font-bold text-sm tracking-tight leading-none">
-              AECS Learning
-            </div>
-            <div className="text-[10px] text-slate-400 font-medium mt-1">
-              Student Workspace
-            </div>
+            <div className="font-display text-sm font-semibold">AECS Learning</div>
+            <div className="text-xs text-white/65">Student workspace</div>
           </div>
         </div>
+        {isMobileOpen && (
+          <button
+            ref={closeButtonRef}
+            type="button"
+            onClick={onCloseMobile}
+            className="alc-button-quiet !h-11 !w-11 !p-0 !text-white hover:!bg-white/10"
+            aria-label="Close navigation"
+          >
+            <X className="h-5 w-5" aria-hidden="true" />
+          </button>
+        )}
       </div>
 
-      {/* Program Isolation Indicator Badge */}
-      <div className="px-4 py-3 bg-slate-900/80 border-b border-slate-800/80">
-        <div className="text-[10px] uppercase font-bold tracking-wider text-slate-400">
-          Enrolled Program
-        </div>
-        <div className="mt-1 flex items-center justify-between">
-          <span className="text-xs font-bold text-[#EA580C] tracking-wide">
-            {programName}
-          </span>
-          <span className="text-[10px] px-1.5 py-0.5 rounded bg-slate-800 text-slate-300 border border-slate-700">
-            Isolated
-          </span>
+      <div className="border-b border-white/10 px-4 py-4">
+        <div className="text-xs font-medium text-white/60">Assigned workspace</div>
+        <div className="mt-1 flex items-center justify-between gap-2">
+          <span className="font-display text-sm font-semibold text-white">{programName}</span>
+          <span className="rounded-full border border-white/15 px-2 py-1 text-xs text-white/70">Demo</span>
         </div>
       </div>
 
-      {/* Navigation Links */}
-      <div className="flex-1 py-3 px-2 space-y-1 overflow-y-auto">
-        <div className="px-2 pb-1 text-[10px] font-semibold uppercase text-slate-400 tracking-wider">
-          Primary Navigation
-        </div>
-        {navItems.map((item) => {
-          const isActive = currentTab === item.id;
-          return (
-            <button
-              key={item.id}
-              onClick={() => {
-                onSelectTab(item.id);
-                onCloseMobile();
-              }}
-              className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-xs font-semibold transition-all ${
-                isActive
-                  ? 'bg-slate-800 text-white border-l-4 border-[#EA580C] pl-2.5 shadow-sm'
-                  : 'text-slate-300 hover:bg-slate-850 hover:text-white'
-              }`}
-            >
-              <span className={isActive ? 'text-[#EA580C]' : 'text-slate-400'}>
-                {item.icon}
-              </span>
-              <span className="flex-1 text-left">{item.label}</span>
-              {isActive && <ChevronRight className="w-3.5 h-3.5 text-[#EA580C]" />}
-            </button>
-          );
-        })}
-      </div>
+      <nav className="flex-1 overflow-y-auto px-2 py-4" aria-label="Student workspace">
+        <ul className="space-y-1">
+          {navItems.map((item) => {
+            const active = currentTab === item.id;
+            return (
+              <li key={item.id}>
+                <button
+                  type="button"
+                  onClick={() => choose(item.id)}
+                  aria-current={active ? 'page' : undefined}
+                  className={`flex min-h-11 w-full items-center gap-3 rounded-lg px-3 text-sm font-medium transition-[background-color,color] duration-150 ${
+                    active ? 'bg-white text-[var(--color-ink)]' : 'text-white/72 hover:bg-white/8 hover:text-white'
+                  }`}
+                >
+                  <span className={active ? 'text-[var(--color-accent)]' : 'text-white/55'} aria-hidden="true">
+                    {item.icon}
+                  </span>
+                  <span className="flex-1 text-left">{item.label}</span>
+                  {active && <ChevronRight className="h-4 w-4 text-[var(--color-accent)]" aria-hidden="true" />}
+                </button>
+              </li>
+            );
+          })}
+        </ul>
+      </nav>
 
-      {/* Strict Isolation & Security Verification Controls */}
-      <div className="p-3 border-t border-slate-800 bg-slate-950/40 space-y-2">
-        <div className="text-[10px] uppercase tracking-wider text-slate-400 font-semibold px-1">
-          Isolation Audit Tools
-        </div>
-
+      <div className="border-t border-white/10 p-3">
         <button
-          onClick={onSimulateUnauthorizedUrl}
-          className="w-full flex items-center justify-between p-2 rounded bg-slate-900 hover:bg-red-950/40 border border-slate-800 hover:border-red-800/60 text-[11px] text-slate-300 transition-colors group"
-          title="Test attempt to access URL of another program"
-        >
-          <span className="flex items-center gap-1.5">
-            <ShieldAlert className="w-3.5 h-3.5 text-amber-400 group-hover:text-red-400" />
-            <span>Test Cross-URL Guard</span>
-          </span>
-          <span className="text-[10px] text-slate-400 group-hover:text-red-300">Run</span>
-        </button>
-
-        <button
-          onClick={onOpenAdminModal}
-          className="w-full flex items-center justify-between p-2 rounded bg-slate-900 hover:bg-slate-800 border border-slate-800 text-[11px] text-slate-300 transition-colors"
-          title="Admin authority to correct or change student assigned program"
-        >
-          <span className="flex items-center gap-1.5">
-            <User className="w-3.5 h-3.5 text-blue-400" />
-            <span>Admin Program Desk</span>
-          </span>
-          <span className="text-[10px] text-slate-400">Manage</span>
-        </button>
-
-        <button
+          type="button"
           onClick={onLogout}
-          className="w-full flex items-center gap-2 p-2 rounded hover:bg-slate-800 text-[11px] text-slate-400 hover:text-slate-200 transition-colors mt-2"
+          className="flex min-h-11 w-full items-center gap-3 rounded-lg px-3 text-sm font-medium text-white/70 transition-colors hover:bg-white/8 hover:text-white"
         >
-          <LogOut className="w-3.5 h-3.5" />
-          <span>Sign Out</span>
+          <LogOut className="h-4 w-4" aria-hidden="true" />
+          Exit demo
         </button>
       </div>
     </div>
@@ -152,23 +132,20 @@ export const Sidebar: React.FC<SidebarProps> = ({
 
   return (
     <>
-      {/* Desktop Sidebar */}
-      <aside className="hidden md:block shrink-0 sticky top-0 h-screen z-20">
-        {sidebarContent}
-      </aside>
-
-      {/* Mobile Drawer */}
+      <aside className="sticky top-0 hidden h-screen shrink-0 md:block">{content}</aside>
       {isMobileOpen && (
-        <div className="md:hidden fixed inset-0 z-50 flex">
-          <div
-            className="fixed inset-0 bg-black/60 backdrop-blur-xs"
+        <div className="fixed inset-0 z-50 flex md:hidden" role="dialog" aria-modal="true" aria-label="Navigation menu">
+          <button
+            type="button"
+            className="fixed inset-0 cursor-default bg-[color:color-mix(in_oklch,var(--color-ink)_65%,transparent)]"
             onClick={onCloseMobile}
+            aria-label="Close navigation"
           />
-          <div className="relative z-10 animate-in slide-in-from-left duration-200">
-            {sidebarContent}
-          </div>
+          <aside className="relative z-10 h-full">{content}</aside>
         </div>
       )}
     </>
   );
 };
+
+export const MobileMenuIcon = Menu;
