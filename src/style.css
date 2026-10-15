@@ -1,4 +1,4 @@
-/* Hallmark · macrostructure: Instrument Panel + Workbench · theme: Lumen Day + Night Foundry · audience: enrolled language learners · use: explore + sign in · tone: technical-editorial · anchor hue: indigo 268 */
+/* Hallmark · macrostructure: Instrument Panel + Workbench · theme: Lumen Day + Night Foundry · audience: enrolled language learners · use: explore + sign in · tone: technical-editorial · motion: staged reveal + workflow signal + tactile controls · anchor hue: indigo 268 */
 /* Hallmark · pre-emit critique: P5 H5 E5 S5 R5 V5 · contrast: pass (40–41) · nav: N1b + N3 · footer: Ft2 · slop: pass (42–45) · honest: pass (46) · chrome: pass (47) · tokens: pass (48) · responsive: pass (49) · icons: pass (30) · mobile: pass (34, 49, 50–57) */
 @import url("https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&family=Instrument+Serif&family=JetBrains+Mono:wght@400;500&display=swap");
 @import "../tokens.css";
@@ -76,6 +76,19 @@
 }
 
 @layer components {
+  body,
+  #root > div,
+  header,
+  #platform,
+  footer,
+  .alc-panel,
+  .lumen-meter {
+    transition:
+      background-color var(--dur-medium) var(--ease-in-out),
+      border-color var(--dur-medium) var(--ease-in-out),
+      color var(--dur-medium) var(--ease-in-out);
+  }
+
   .alc-panel {
     border: var(--rule-thin) solid var(--color-rule);
     border-radius: var(--radius-card);
@@ -120,10 +133,6 @@
     color: var(--color-accent-ink);
   }
 
-  .alc-button-primary:hover {
-    background: color-mix(in oklch, var(--color-ink) 90%, var(--color-surface));
-  }
-
   .alc-button-primary:active,
   .alc-button-secondary:active,
   .alc-button-quiet:active { transform: translateY(1px); }
@@ -134,20 +143,10 @@
     color: var(--color-ink);
   }
 
-  .alc-button-secondary:hover {
-    border-color: var(--color-accent);
-    background: var(--color-paper-2);
-  }
-
   .alc-button-quiet {
     border: 1px solid transparent;
     background: transparent;
     color: var(--color-ink-2);
-  }
-
-  .alc-button-quiet:hover {
-    background: var(--color-paper-2);
-    color: var(--color-ink);
   }
 
   .alc-button-primary:disabled,
@@ -171,6 +170,10 @@
     color: var(--color-ink);
     padding: 0.7rem 0.8rem;
     font-size: var(--text-sm);
+    transition:
+      background-color var(--dur-short) var(--ease-out),
+      border-color var(--dur-short) var(--ease-out),
+      color var(--dur-short) var(--ease-out);
   }
 
   .alc-field::placeholder { color: var(--color-muted); }
@@ -254,6 +257,15 @@
       var(--color-paper);
   }
 
+  .lumen-hero > div > div:first-child > * {
+    animation: lumen-reveal calc(var(--dur-reveal) + 100ms) var(--ease-out) backwards;
+  }
+
+  .lumen-hero > div > div:first-child > :nth-child(1) { animation-delay: 40ms; }
+  .lumen-hero > div > div:first-child > :nth-child(2) { animation-delay: 100ms; }
+  .lumen-hero > div > div:first-child > :nth-child(3) { animation-delay: 160ms; }
+  .lumen-hero > div > div:first-child > :nth-child(4) { animation-delay: 220ms; }
+
   .lumen-title {
     font-family: var(--font-display);
     font-size: var(--text-display);
@@ -294,7 +306,7 @@
     width: min(100%, 25rem);
     min-height: 22rem;
     margin-inline: auto;
-    animation: lumen-reveal var(--dur-reveal) var(--ease-out) both;
+    animation: lumen-reveal calc(var(--dur-reveal) + 100ms) var(--ease-out) 140ms backwards;
   }
 
   .lumen-prism {
@@ -413,6 +425,8 @@
     flex: 1;
     background: var(--color-accent);
     opacity: 0.48;
+    transform-origin: bottom;
+    animation: lumen-meter-rise calc(var(--dur-reveal) + 100ms) var(--ease-out) 260ms backwards;
   }
 }
 
@@ -424,6 +438,25 @@
 @keyframes lumen-underline {
   from { transform: scaleX(0); }
   to { transform: scaleX(1); }
+}
+
+@keyframes lumen-meter-rise {
+  from {
+    opacity: 0.12;
+    transform: scaleY(0.12);
+  }
+  to {
+    opacity: 0.48;
+    transform: scaleY(1);
+  }
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .alc-button-primary:not(:disabled):not(:active):hover,
+  .alc-button-secondary:not(:disabled):not(:active):hover,
+  .alc-button-quiet:not(:disabled):not(:active):hover {
+    transform: translateY(-1px);
+  }
 }
 
 @media (max-width: 40rem) {
@@ -449,5 +482,12 @@
     animation-duration: 1ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 1ms !important;
+  }
+
+  .lumen-hero > div > div:first-child > *,
+  .lumen-apparatus,
+  .lumen-meter__bars span {
+    opacity: 1;
+    transform: none;
   }
 }

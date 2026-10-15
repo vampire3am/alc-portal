@@ -52,9 +52,11 @@ Four-point named scale in `tokens.css`. Use hairline rules, 8px inputs, and 12px
 
 ## Motion
 
-- Hero apparatus and accent underline reveal once in 320ms.
+- Hero copy and apparatus assemble once in a 420ms stagger capped at 220ms of delay.
+- The learning-path meter rises once as a functional workflow readout; no decorative motion loops.
+- Buttons use a one-pixel hover lift and pressed state; fields transition only surface and border colour.
 - Interaction motion is limited to opacity, transform, and border/color state.
-- Reduced motion removes the reveal and shortens state changes.
+- Reduced motion removes spatial reveals and resolves all elements immediately.
 
 ## CTA voice
 

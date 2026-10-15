@@ -1,0 +1,14 @@
+{
+  "date": "2026-10-15",
+  "framework": "React 19 + Vite 6 + Tailwind CSS 4",
+  "fontStack": "Instrument Serif + Geist + JetBrains Mono",
+  "palette": "OKLCH custom properties in tokens.css",
+  "motion": "CSS-only; no motion library",
+  "spacing": "Four-point named scale in tokens.css",
+  "preserve": [
+    "Lumen Day + Night Foundry themes",
+    "Instrument Panel + Workbench structure",
+    "authored sentence case",
+    "persistent theme control"
+  ]
+}
