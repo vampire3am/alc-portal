@@ -7,6 +7,15 @@
       "genre": "lumen-foundry",
       "macrostructure": "Instrument Panel + Workbench",
       "theme": "Lumen 19 / Day + Night Foundry",
+      "enrichment": "authored sentence case + uppercase technical labels",
+      "brief": "Restore sentence case, acronyms, and proper-name capitalization"
+    },
+    {
+      "date": "2026-10-15",
+      "route": "public + app",
+      "genre": "lumen-foundry",
+      "macrostructure": "Instrument Panel + Workbench",
+      "theme": "Lumen 19 / Day + Night Foundry",
       "enrichment": "persistent theme control + editorial lead typography",
       "brief": "Match Lumen reference typography and retain theme switching"
     },

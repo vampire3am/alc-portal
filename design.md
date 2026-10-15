@@ -43,7 +43,7 @@ The indigo anchor carries navigation, focus, diagrams, and primary action. Coral
 - Mono labels: JetBrains Mono, 400–500, uppercase.
 - Hero statement: tightly tracked Instrument Serif at `0.94` line-height.
 - Hero narrative copy: Instrument Serif for the editorial contrast seen in the Lumen reference; functional and long-form UI copy remains Geist.
-- Prose is lowercase by default; email and password inputs preserve entered case.
+- Prose uses authored sentence case; acronyms and proper names retain their intended capitalization. This intentionally overrides Lumen's all-lowercase convention for clarity.
 - Italics are prohibited.
 
 ## Spacing and shape
