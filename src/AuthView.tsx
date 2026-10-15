@@ -1,255 +1,96 @@
-import React, { useEffect, useState } from 'react';
-import {
-  ArrowRight,
-  BookOpenCheck,
-  FileCheck2,
-  Headphones,
-  ShieldCheck,
-  Target,
-} from 'lucide-react';
+import React, { useState } from 'react';
+import { ArrowLeft, ArrowRight, KeyRound, ShieldCheck } from 'lucide-react';
 import { useAuth } from './AuthContext';
-import { ThemeToggle } from './ThemeToggle';
+import { routeHref } from './publicRoutes';
 
 export const AuthView: React.FC = () => {
-  const { login } = useAuth();
+  const { login, requestPasswordReset } = useAuth();
+  const [mode, setMode] = useState<'sign-in' | 'recovery'>('sign-in');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [formState, setFormState] = useState<'idle' | 'loading' | 'error'>('idle');
+  const [formState, setFormState] = useState<'idle' | 'loading' | 'error' | 'success'>('idle');
   const [message, setMessage] = useState('');
-  const [motionReady, setMotionReady] = useState(false);
 
-  useEffect(() => {
-    let secondFrame = 0;
-    const firstFrame = window.requestAnimationFrame(() => {
-      secondFrame = window.requestAnimationFrame(() => setMotionReady(true));
-    });
-
-    const sections = Array.from(document.querySelectorAll<HTMLElement>('[data-reveal]'));
-    const skipSpatialMotion = window.matchMedia('(prefers-reduced-motion: reduce), (max-width: 39.999rem)').matches;
-    let observer: IntersectionObserver | undefined;
-
-    if (skipSpatialMotion || !('IntersectionObserver' in window)) {
-      sections.forEach((section) => section.setAttribute('data-reveal', 'visible'));
-    } else {
-      observer = new IntersectionObserver((entries) => {
-        entries.forEach((entry) => {
-          if (!entry.isIntersecting) return;
-          (entry.target as HTMLElement).setAttribute('data-reveal', 'visible');
-          observer?.unobserve(entry.target);
-        });
-      }, { threshold: 0.14, rootMargin: '0px 0px -8% 0px' });
-
-      sections.forEach((section) => observer?.observe(section));
+  const clearFeedback = () => {
+    if (formState !== 'loading') {
+      setFormState('idle');
+      setMessage('');
     }
-
-    return () => {
-      window.cancelAnimationFrame(firstFrame);
-      window.cancelAnimationFrame(secondFrame);
-      observer?.disconnect();
-    };
-  }, []);
+  };
 
   const submit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     setFormState('loading');
     setMessage('');
-    const result = await login(email.trim(), password);
-    if (!result.ok) {
-      setMessage(result.message ?? 'Sign-in was unsuccessful.');
-      setFormState('error');
-    }
+    const result = mode === 'sign-in'
+      ? await login(email.trim(), password)
+      : await requestPasswordReset(email.trim());
+    setMessage(result.message ?? (result.ok ? 'Request submitted.' : 'The request was unsuccessful.'));
+    setFormState(result.ok ? 'success' : 'error');
+  };
+
+  const switchMode = () => {
+    setMode((current) => current === 'sign-in' ? 'recovery' : 'sign-in');
+    setPassword('');
+    setFormState('idle');
+    setMessage('');
   };
 
   return (
-    <div data-motion={motionReady ? 'ready' : 'waiting'} className="min-h-screen bg-[var(--color-paper)] text-[var(--color-ink)]">
-      <header className="sticky top-0 z-30 border-b border-[var(--color-rule)] bg-[var(--color-paper)]">
-        <div className="mx-auto flex min-h-16 max-w-7xl items-center justify-between gap-4 px-4 sm:px-6">
-          <a href="#top" className="flex min-w-0 items-center gap-3" aria-label="AECS Learning Center home">
-            <span className="grid h-10 w-10 shrink-0 place-items-center rounded-lg bg-[var(--color-navy)] font-display text-sm font-bold text-white">ALC</span>
-            <span className="min-w-0">
-              <span className="block whitespace-nowrap font-display text-sm font-semibold tracking-tight sm:text-base">AECS Learning Center</span>
-              <span className="hidden text-xs text-[var(--color-muted)] sm:block">Language test preparation</span>
-            </span>
-          </a>
-          <div className="flex items-center gap-2">
-            <ThemeToggle />
-            <a href="#access" className="alc-button-primary px-3 sm:px-4">
-              Sign in <ArrowRight className="h-4 w-4" aria-hidden="true" />
-            </a>
-          </div>
+    <section className="public-access-grid" aria-labelledby="access-heading">
+      <div className="public-access-copy">
+        <p className="alc-label">06 · secure access</p>
+        <h1 id="access-heading" className="public-page-title">
+          {mode === 'sign-in' ? 'Continue your enrolled program.' : 'Recover account access.'}
+        </h1>
+        <p className="public-page-lede">
+          {mode === 'sign-in'
+            ? 'Use the email address and password attached to your AECS enrollment. Your assigned program is provided by the account service after authentication.'
+            : 'Enter the email address attached to your enrollment. For privacy, the confirmation is the same whether or not an account is found.'}
+        </p>
+        <div className="public-fact-list">
+          <div><ShieldCheck aria-hidden="true" /><span><strong>Server-issued sessions</strong>Credentials and session tokens are never stored in this frontend.</span></div>
+          <div><KeyRound aria-hidden="true" /><span><strong>Role-based workspace</strong>Students and staff only see the workspace authorized by the account service.</span></div>
         </div>
-      </header>
+        <a className="public-text-link" href={routeHref('contact')}>Need enrollment help? Contact AECS <ArrowRight aria-hidden="true" /></a>
+      </div>
 
-      <main id="top">
-        <section className="lumen-hero">
-          <div className="mx-auto grid max-w-7xl gap-10 px-4 pb-16 pt-12 sm:px-6 sm:pb-28 sm:pt-20 lg:grid-cols-[minmax(0,1.15fr)_minmax(22rem,.85fr)] lg:items-center lg:gap-16">
-            <div>
-              <p className="alc-label">00 · learning system</p>
-              <h1 className="lumen-title mt-5 max-w-[14ch]">
-                <em>Prepare</em> with a plan that fits your exam.
-              </h1>
-              <p className="lumen-lede mt-6">
-                AECS brings lessons, targeted practice, mock-test workflows, and progress tracking into one focused workspace for every enrolled student.
-              </p>
-              <div className="mt-8 flex flex-wrap gap-3">
-                <a href="#programs" className="alc-button-primary">Explore programs</a>
-                <a href="#access" className="alc-button-secondary">Student sign in</a>
-              </div>
+      <form className="alc-panel public-auth-card" onSubmit={submit} noValidate>
+        <p className="alc-label">{mode === 'sign-in' ? 'student + staff' : 'account recovery'}</p>
+        <h2>{mode === 'sign-in' ? 'Sign in' : 'Reset password'}</h2>
+        <p>{mode === 'sign-in' ? 'Enter your issued credentials.' : 'We will request a recovery message from the account service.'}</p>
+
+        <label htmlFor="auth-email">Email address</label>
+        <input id="auth-email" type="email" autoComplete="email" required value={email}
+          onChange={(event) => { setEmail(event.target.value); clearFeedback(); }}
+          className="alc-field" aria-invalid={formState === 'error'} placeholder="you@example.com" />
+
+        {mode === 'sign-in' && (
+          <>
+            <div className="auth-label-row">
+              <label htmlFor="auth-password">Password</label>
+              <button type="button" className="public-text-button" onClick={switchMode}>Forgot password?</button>
             </div>
-            <figure className="lumen-apparatus" aria-label="Four AECS programs routed into one assigned student workspace">
-              <span className="lumen-beam" aria-hidden="true" />
-              <div className="lumen-prism" aria-hidden="true" />
-              <span className="lumen-ray [--ray-angle:-18deg] [--ray-color:var(--color-accent)] [--ray-offset:-1.25rem]" aria-hidden="true" />
-              <span className="lumen-ray [--ray-angle:-7deg] [--ray-color:var(--color-spectrum-mid)] [--ray-offset:-.25rem]" aria-hidden="true" />
-              <span className="lumen-ray [--ray-angle:5deg] [--ray-color:var(--color-accent-2)] [--ray-offset:.75rem]" aria-hidden="true" />
-              <span className="lumen-callout lumen-callout--one">programs · 04</span>
-              <span className="lumen-callout lumen-callout--two">levels · a1–b2</span>
-              <span className="lumen-callout lumen-callout--three">skills · 04–06</span>
-              <span className="lumen-callout lumen-callout--four">access · enrolled</span>
-            </figure>
-          </div>
-        </section>
+            <input id="auth-password" type="password" autoComplete="current-password" required minLength={8}
+              value={password} onChange={(event) => { setPassword(event.target.value); clearFeedback(); }}
+              className="alc-field" aria-invalid={formState === 'error'} placeholder="Enter your password" />
+          </>
+        )}
 
-        <aside className="lumen-meter" aria-label="AECS learning workflow readout">
-          <p className="lumen-meter__label">path · assigned</p>
-          <div className="lumen-meter__bars" aria-hidden="true">
-            {Array.from({ length: 48 }, (_, index) => {
-              const height = 24 + Math.round((Math.sin(index / 4) + 1) * 28);
-              return (
-                <span
-                  key={index}
-                  style={{ height: `${height}%`, '--bar-delay': `${index * 10}ms` } as React.CSSProperties}
-                />
-              );
-            })}
-          </div>
-          <p className="lumen-meter__label">learn · practice · assess</p>
-        </aside>
-
-        <section id="programs" data-reveal className="mx-auto max-w-7xl px-4 py-16 sm:px-6 sm:py-20" aria-labelledby="programs-heading">
-          <div className="max-w-3xl">
-            <p className="alc-label">01 · programs</p>
-            <h2 id="programs-heading" className="mt-3 text-3xl font-semibold tracking-[-0.035em] sm:text-4xl">A workspace shaped around the exam.</h2>
-            <p className="mt-4 text-base leading-7 text-[var(--color-muted)]">Build the skills, timing, and familiarity required by your chosen pathway.</p>
-          </div>
-          <div className="mt-9 divide-y divide-[var(--color-rule)] border-y border-[var(--color-rule)]">
-            {[
-              ['IELTS', 'Academic and General Training', 'Listening · Reading · Writing · Speaking'],
-              ['PTE Academic', 'Computer-based English proficiency', 'Speaking & writing · Reading · Listening'],
-              ['Duolingo English Test', 'Adaptive English proficiency', 'Literacy · Comprehension · Conversation · Production'],
-              ['German', 'CEFR-aligned language development', 'Vocabulary · Grammar · Lesen · Hören · Schreiben · Sprechen'],
-            ].map(([name, subtitle, areas], index) => (
-              <article key={name} className="grid gap-3 py-6 md:grid-cols-[3rem_minmax(12rem,.65fr)_minmax(0,1fr)] md:items-center md:gap-6">
-                <span className="font-mono text-xs text-[var(--color-muted)]">{String(index + 1).padStart(2, '0')}</span>
-                <div>
-                  <h3 className="text-xl font-semibold text-[var(--color-ink)]">{name}</h3>
-                  <p className="mt-1 text-sm text-[var(--color-muted)]">{subtitle}</p>
-                </div>
-                <p className="text-sm leading-6 text-[var(--color-ink-2)]">{areas}</p>
-              </article>
-            ))}
-          </div>
-        </section>
-
-        <section id="platform" data-reveal className="border-y border-[var(--color-rule)] bg-[var(--color-surface)]">
-          <div className="mx-auto grid max-w-7xl gap-10 px-4 py-16 sm:px-6 sm:py-20 lg:grid-cols-[minmax(17rem,.7fr)_minmax(0,1.3fr)] lg:gap-16">
-            <div>
-              <p className="alc-label">02 · workspace</p>
-              <h2 className="mt-3 text-3xl font-semibold tracking-[-0.035em] sm:text-4xl">Less switching. More deliberate practice.</h2>
-              <p className="mt-4 text-base leading-7 text-[var(--color-muted)]">The student workspace keeps curriculum, practice, assessment, and progress together without burying the next action.</p>
-            </div>
-            <div className="divide-y divide-[var(--color-rule)] border-y border-[var(--color-rule)]">
-              {[
-                [BookOpenCheck, 'Structured learning', 'Move from concepts and worked examples into level-appropriate exercises.'],
-                [Target, 'Targeted practice', 'Choose the skill that needs attention instead of repeating an entire course.'],
-                [FileCheck2, 'Assessment workflow', 'Use timed interfaces built around reading, listening, writing, and speaking tasks.'],
-                [ShieldCheck, 'Account-based access', 'Enrollment and program scope are designed to be enforced by the connected account service.'],
-              ].map(([Icon, title, copy]) => {
-                const FeatureIcon = Icon as typeof BookOpenCheck;
-                return (
-                  <article key={title as string} className="grid gap-4 py-6 sm:grid-cols-[2.5rem_minmax(0,1fr)]">
-                    <FeatureIcon className="h-5 w-5 text-[var(--color-accent)]" aria-hidden="true" />
-                    <div>
-                      <h3 className="text-lg font-semibold text-[var(--color-ink)]">{title as string}</h3>
-                      <p className="mt-2 text-sm leading-6 text-[var(--color-muted)]">{copy as string}</p>
-                    </div>
-                  </article>
-                );
-              })}
-            </div>
-          </div>
-        </section>
-
-        <section id="access" data-reveal className="mx-auto grid max-w-7xl gap-10 px-4 py-16 sm:px-6 sm:py-20 lg:grid-cols-[minmax(0,1fr)_minmax(20rem,.72fr)] lg:items-start lg:gap-16">
-          <div className="max-w-2xl">
-            <p className="alc-label">03 · access</p>
-            <h2 className="mt-3 text-3xl font-semibold tracking-[-0.035em] sm:text-4xl">Continue your enrolled program.</h2>
-            <p className="mt-4 text-base leading-7 text-[var(--color-muted)]">
-              Student accounts are issued by AECS. Sign in with the email address attached to your enrollment.
-            </p>
-            <div className="mt-8 grid gap-5 border-t border-[var(--color-rule)] pt-6 sm:grid-cols-2">
-              <div className="flex gap-3">
-                <ShieldCheck className="mt-0.5 h-5 w-5 shrink-0 text-[var(--color-accent)]" aria-hidden="true" />
-                <div><h3 className="font-semibold">Protected session</h3><p className="mt-1 text-sm leading-6 text-[var(--color-muted)]">Designed for secure, server-issued session cookies.</p></div>
-              </div>
-              <div className="flex gap-3">
-                <Headphones className="mt-0.5 h-5 w-5 shrink-0 text-[var(--color-accent)]" aria-hidden="true" />
-                <div><h3 className="font-semibold">Need access?</h3><p className="mt-1 text-sm leading-6 text-[var(--color-muted)]">Contact your AECS coordinator to confirm enrollment.</p></div>
-              </div>
-            </div>
-          </div>
-
-          <form className="alc-panel p-5 sm:p-6" onSubmit={submit} aria-labelledby="signin-heading" noValidate>
-            <h3 id="signin-heading" className="text-2xl font-semibold">Student sign in</h3>
-            <p className="mt-2 text-sm leading-6 text-[var(--color-muted)]">Enter the credentials issued with your enrollment.</p>
-            <label htmlFor="email" className="mt-6 block text-sm font-semibold text-[var(--color-ink)]">Email address</label>
-            <input
-              id="email"
-              type="email"
-              autoComplete="email"
-              required
-              value={email}
-              onChange={(event) => {
-                setEmail(event.target.value);
-                if (formState === 'error') setFormState('idle');
-              }}
-              className="alc-field mt-2"
-              aria-invalid={formState === 'error'}
-              placeholder="you@example.com"
-            />
-            <label htmlFor="password" className="mt-5 block text-sm font-semibold text-[var(--color-ink)]">Password</label>
-            <input
-              id="password"
-              type="password"
-              autoComplete="current-password"
-              required
-              minLength={8}
-              value={password}
-              onChange={(event) => {
-                setPassword(event.target.value);
-                if (formState === 'error') setFormState('idle');
-              }}
-              className="alc-field mt-2"
-              aria-invalid={formState === 'error'}
-              placeholder="Enter your password"
-            />
-            <div className="min-h-12 pt-3" aria-live="polite">
-              {formState === 'error' && <p className="text-sm font-medium text-red-700" role="alert">{message}</p>}
-            </div>
-            <button type="submit" className="alc-button-primary w-full" disabled={formState === 'loading' || !email.trim() || password.length < 8}>
-              {formState === 'loading' ? 'Signing in…' : 'Sign in'}
-              {formState !== 'loading' && <ArrowRight className="h-4 w-4" aria-hidden="true" />}
-            </button>
-          </form>
-        </section>
-      </main>
-
-      <footer className="border-t border-[var(--color-rule)] bg-[var(--color-navy)] text-white">
-        <div className="mx-auto flex max-w-7xl flex-col gap-4 px-4 py-8 sm:flex-row sm:items-center sm:justify-between sm:px-6">
-          <div><p className="font-display font-semibold">AECS Learning Center</p><p className="mt-1 text-sm text-white/65">Language test preparation</p></div>
-          <p className="text-sm text-white/65">IELTS · PTE · DET · German CEFR</p>
+        <div className="auth-feedback" aria-live="polite">
+          {message && <p data-tone={formState} role={formState === 'error' ? 'alert' : 'status'}>{message}</p>}
         </div>
-      </footer>
-    </div>
+        <button type="submit" className="alc-button-primary w-full"
+          disabled={formState === 'loading' || !email.trim() || (mode === 'sign-in' && password.length < 8)}>
+          {formState === 'loading' ? 'Submitting…' : mode === 'sign-in' ? 'Sign in' : 'Request reset'}
+          {formState !== 'loading' && <ArrowRight className="h-4 w-4" aria-hidden="true" />}
+        </button>
+        {mode === 'recovery' && (
+          <button type="button" className="alc-button-quiet mt-2 w-full" onClick={switchMode}>
+            <ArrowLeft className="h-4 w-4" aria-hidden="true" /> Back to sign in
+          </button>
+        )}
+      </form>
+    </section>
   );
 };

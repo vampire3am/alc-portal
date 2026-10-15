@@ -8,6 +8,8 @@ import {
   LogOut,
   Menu,
   PenTool,
+  Settings,
+  LifeBuoy,
   TrendingUp,
   User,
   X,
@@ -30,6 +32,8 @@ const navItems: Array<{ id: ViewTab; label: string; icon: React.ReactNode }> = [
   { id: 'mock-tests', label: 'Mock tests', icon: <FileCheck2 className="h-4 w-4" /> },
   { id: 'progress', label: 'Progress', icon: <TrendingUp className="h-4 w-4" /> },
   { id: 'resources', label: 'Resources', icon: <FolderArchive className="h-4 w-4" /> },
+  { id: 'support', label: 'Support', icon: <LifeBuoy className="h-4 w-4" /> },
+  { id: 'settings', label: 'Settings', icon: <Settings className="h-4 w-4" /> },
   { id: 'profile', label: 'Profile', icon: <User className="h-4 w-4" /> },
 ];
 

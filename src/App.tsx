@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { AuthProvider, useAuth } from './AuthContext';
-import { AuthView } from './AuthView';
+import { PublicSite } from './PublicSite';
+import { AdminPortal } from './AdminPortal';
 import { Sidebar } from './Sidebar';
 import { StudentPortal } from './StudentPortal';
 import type { ViewTab } from './types';
@@ -23,7 +24,11 @@ const PortalApp: React.FC = () => {
   }
 
   if (!currentUser) {
-    return <AuthView />;
+    return <PublicSite />;
+  }
+
+  if (currentUser.role === 'admin' || currentUser.role === 'instructor') {
+    return <AdminPortal user={currentUser} onLogout={logout} />;
   }
 
   const assignedConfig = PROGRAMS[currentUser.assignedProgram];

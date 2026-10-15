@@ -7,6 +7,8 @@ import {
   FileCheck2,
   Library,
   Menu,
+  LifeBuoy,
+  Settings,
   Play,
   UserRound,
 } from 'lucide-react';
@@ -30,6 +32,8 @@ const tabTitles: Record<ViewTab, string> = {
   'mock-tests': 'Mock tests',
   progress: 'Progress',
   resources: 'Resources',
+  support: 'Support',
+  settings: 'Settings',
   profile: 'Profile',
 };
 
@@ -259,6 +263,41 @@ export const StudentPortal: React.FC<StudentPortalProps> = ({
       );
     }
 
+    if (currentTab === 'support') {
+      return (
+        <div className="space-y-7">
+          {pageIntro('Help and guidance', 'Student support', 'Find the right route for learning questions, access issues, or enrollment changes.')}
+          <div className="grid gap-4 md:grid-cols-2">
+            <article className="alc-panel p-6">
+              <LifeBuoy className="h-6 w-6 text-[var(--color-accent)]" aria-hidden="true" />
+              <h2 className="mt-5 text-xl">Learning guidance</h2>
+              <p className="mt-2 text-sm leading-6 text-[var(--color-muted)]">Ask your AECS coordinator or instructor about study sequence, feedback, and assigned assessments.</p>
+              <p className="alc-note mt-5">Direct support messaging requires the connected support service.</p>
+            </article>
+            <article className="alc-panel p-6">
+              <Settings className="h-6 w-6 text-[var(--color-accent)]" aria-hidden="true" />
+              <h2 className="mt-5 text-xl">Account access</h2>
+              <p className="mt-2 text-sm leading-6 text-[var(--color-muted)]">Use password recovery from the sign-in screen or contact AECS when your enrollment scope needs correction.</p>
+              <button type="button" className="alc-button-secondary mt-5" onClick={() => onSelectTab('profile')}>Review profile</button>
+            </article>
+          </div>
+        </div>
+      );
+    }
+
+    if (currentTab === 'settings') {
+      return (
+        <div className="space-y-7">
+          {pageIntro('Preferences', 'Workspace settings', 'Control visual preferences here. Account and enrollment changes remain server-managed.')}
+          <div className="alc-panel max-w-2xl divide-y divide-[var(--color-line)]">
+            <div className="flex items-center justify-between gap-6 p-6"><div><h2 className="text-lg">Appearance</h2><p className="mt-1 text-sm text-[var(--color-muted)]">Switch between Day and Night Foundry.</p></div><ThemeToggle /></div>
+            <div className="p-6"><h2 className="text-lg">Notifications</h2><p className="mt-1 text-sm leading-6 text-[var(--color-muted)]">Notification preferences become available when the account service exposes a settings endpoint.</p><button type="button" className="alc-button-secondary mt-4" disabled>Not connected</button></div>
+            <div className="p-6"><h2 className="text-lg">Enrollment</h2><p className="mt-1 text-sm leading-6 text-[var(--color-muted)]">Program assignments cannot be changed from the browser. Contact AECS for corrections.</p></div>
+          </div>
+        </div>
+      );
+    }
+
     return (
       <div className="space-y-7">
         {pageIntro('Student profile', user.fullName, 'Your account details and assigned learning pathway.')}
@@ -295,7 +334,9 @@ export const StudentPortal: React.FC<StudentPortalProps> = ({
     <div className="flex min-w-0 flex-1 flex-col bg-[var(--color-paper)]">
       {renderHeader()}
       <main className="mx-auto w-full max-w-[1440px] flex-1 px-4 py-6 sm:px-6 sm:py-8 lg:px-10">
-        {user.assignedProgram === 'GERMAN' ? (
+        {currentTab === 'support' || currentTab === 'settings' ? (
+          renderStandardContent()
+        ) : user.assignedProgram === 'GERMAN' ? (
           <GermanPortalWorkspace user={user} currentTab={currentTab} onSelectTab={onSelectTab} />
         ) : user.assignedProgram === 'IELTS' ? (
           <IeltsPortalWorkspace user={user} currentTab={currentTab} onSelectTab={onSelectTab} />

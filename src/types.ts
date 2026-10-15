@@ -11,6 +11,7 @@ export interface UserAccount {
   germanLevel?: GermanLevel;
   ieltsTrack?: IeltsTrack;
   registrationDate: string;
+  role?: 'student' | 'instructor' | 'admin';
 }
 
 export interface ProgramConfig {
@@ -44,7 +45,9 @@ export interface ProgramConfig {
   }>;
 }
 
-export type ViewTab = 'dashboard' | 'learn' | 'practice' | 'mock-tests' | 'progress' | 'resources' | 'profile';
+export type ViewTab = 'dashboard' | 'learn' | 'practice' | 'mock-tests' | 'progress' | 'resources' | 'support' | 'settings' | 'profile';
+
+export type AdminView = 'overview' | 'students' | 'programs' | 'content' | 'assessments' | 'submissions' | 'reports' | 'settings';
 
 // ==========================================
 // IELTS WORKSPACE TYPES (ieltsonlinetests.com style)

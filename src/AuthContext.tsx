@@ -10,6 +10,7 @@ interface AuthContextType {
   currentUser: UserAccount | null;
   isLoading: boolean;
   login: (email: string, password: string) => Promise<LoginResult>;
+  requestPasswordReset: (email: string) => Promise<LoginResult>;
   logout: () => Promise<void>;
 }
 
@@ -86,6 +87,32 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           return { ok: true };
         } catch {
           return { ok: false, message: 'The sign-in service could not be reached. Please try again.' };
+        }
+      },
+      requestPasswordReset: async (email) => {
+        if (!API_URL) {
+          return {
+            ok: false,
+            message: 'Password recovery is being configured. Please contact your AECS coordinator.',
+          };
+        }
+
+        try {
+          const response = await fetch(`${API_URL}/password-reset`, {
+            method: 'POST',
+            credentials: 'include',
+            headers: {
+              Accept: 'application/json',
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ email }),
+          });
+          if (!response.ok) {
+            return { ok: false, message: await getMessage(response, 'The reset request could not be submitted.') };
+          }
+          return { ok: true, message: 'If that address is enrolled, recovery instructions have been sent.' };
+        } catch {
+          return { ok: false, message: 'The account service could not be reached. Please try again.' };
         }
       },
       logout: async () => {

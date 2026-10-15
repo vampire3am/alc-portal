@@ -9,7 +9,9 @@ Lumen Foundry: a precise academic instrument made from paper, darkness, light, t
 ## Macrostructure family
 
 - Public entry: Instrument Panel with a blueprint hero, functional learning-system apparatus, and live-style workflow readout.
+- Public service pages: Long Document with route-specific introductions, indexed program tables, and an explicit enrollment sequence.
 - App surfaces: Workbench with persistent navigation and one primary task area.
+- Staff surfaces: Workbench with role-aware navigation and truthful integration states; no synthetic operational metrics.
 - Learning content: Long Document with restrained dividers and readable measures.
 
 ## Theme
@@ -58,6 +60,7 @@ Four-point named scale in `tokens.css`. Use hairline rules, 8px inputs, and 12px
 - Buttons use a one-pixel hover lift and pressed state; fields transition only surface and border colour.
 - Interaction motion is limited to opacity, transform, and border/color state.
 - Reduced motion removes spatial reveals and resolves all elements immediately.
+- Hash-route changes use one short opacity/translate entrance; page sections do not repeatedly animate while scrolling.
 
 ## CTA voice
 

@@ -3,6 +3,15 @@
   "entries": [
     {
       "date": "2026-10-15",
+      "route": "public + student + staff",
+      "genre": "lumen-foundry",
+      "macrostructure": "Instrument Panel + Long Document + Workbench",
+      "theme": "Lumen 19 / Day + Night Foundry",
+      "enrichment": "hash-routed product site + secure recovery + role-aware operations",
+      "brief": "Expand the three-screen shell into a credible SaaS frontend without fabricated proof or unsecured access"
+    },
+    {
+      "date": "2026-10-15",
       "route": "public",
       "genre": "lumen-foundry",
       "macrostructure": "Instrument Panel",
