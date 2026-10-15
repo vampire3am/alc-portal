@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   ArrowRight,
   BookOpenCheck,
@@ -16,6 +16,38 @@ export const AuthView: React.FC = () => {
   const [password, setPassword] = useState('');
   const [formState, setFormState] = useState<'idle' | 'loading' | 'error'>('idle');
   const [message, setMessage] = useState('');
+  const [motionReady, setMotionReady] = useState(false);
+
+  useEffect(() => {
+    let secondFrame = 0;
+    const firstFrame = window.requestAnimationFrame(() => {
+      secondFrame = window.requestAnimationFrame(() => setMotionReady(true));
+    });
+
+    const sections = Array.from(document.querySelectorAll<HTMLElement>('[data-reveal]'));
+    const skipSpatialMotion = window.matchMedia('(prefers-reduced-motion: reduce), (max-width: 39.999rem)').matches;
+    let observer: IntersectionObserver | undefined;
+
+    if (skipSpatialMotion || !('IntersectionObserver' in window)) {
+      sections.forEach((section) => section.setAttribute('data-reveal', 'visible'));
+    } else {
+      observer = new IntersectionObserver((entries) => {
+        entries.forEach((entry) => {
+          if (!entry.isIntersecting) return;
+          (entry.target as HTMLElement).setAttribute('data-reveal', 'visible');
+          observer?.unobserve(entry.target);
+        });
+      }, { threshold: 0.14, rootMargin: '0px 0px -8% 0px' });
+
+      sections.forEach((section) => observer?.observe(section));
+    }
+
+    return () => {
+      window.cancelAnimationFrame(firstFrame);
+      window.cancelAnimationFrame(secondFrame);
+      observer?.disconnect();
+    };
+  }, []);
 
   const submit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -29,7 +61,7 @@ export const AuthView: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[var(--color-paper)] text-[var(--color-ink)]">
+    <div data-motion={motionReady ? 'ready' : 'waiting'} className="min-h-screen bg-[var(--color-paper)] text-[var(--color-ink)]">
       <header className="sticky top-0 z-30 border-b border-[var(--color-rule)] bg-[var(--color-paper)]">
         <div className="mx-auto flex min-h-16 max-w-7xl items-center justify-between gap-4 px-4 sm:px-6">
           <a href="#top" className="flex min-w-0 items-center gap-3" aria-label="AECS Learning Center home">
@@ -83,13 +115,18 @@ export const AuthView: React.FC = () => {
           <div className="lumen-meter__bars" aria-hidden="true">
             {Array.from({ length: 48 }, (_, index) => {
               const height = 24 + Math.round((Math.sin(index / 4) + 1) * 28);
-              return <span key={index} style={{ height: `${height}%` }} />;
+              return (
+                <span
+                  key={index}
+                  style={{ height: `${height}%`, '--bar-delay': `${index * 10}ms` } as React.CSSProperties}
+                />
+              );
             })}
           </div>
           <p className="lumen-meter__label">learn · practice · assess</p>
         </aside>
 
-        <section id="programs" className="mx-auto max-w-7xl px-4 py-16 sm:px-6 sm:py-20" aria-labelledby="programs-heading">
+        <section id="programs" data-reveal className="mx-auto max-w-7xl px-4 py-16 sm:px-6 sm:py-20" aria-labelledby="programs-heading">
           <div className="max-w-3xl">
             <p className="alc-label">01 · programs</p>
             <h2 id="programs-heading" className="mt-3 text-3xl font-semibold tracking-[-0.035em] sm:text-4xl">A workspace shaped around the exam.</h2>
@@ -114,7 +151,7 @@ export const AuthView: React.FC = () => {
           </div>
         </section>
 
-        <section id="platform" className="border-y border-[var(--color-rule)] bg-[var(--color-surface)]">
+        <section id="platform" data-reveal className="border-y border-[var(--color-rule)] bg-[var(--color-surface)]">
           <div className="mx-auto grid max-w-7xl gap-10 px-4 py-16 sm:px-6 sm:py-20 lg:grid-cols-[minmax(17rem,.7fr)_minmax(0,1.3fr)] lg:gap-16">
             <div>
               <p className="alc-label">02 · workspace</p>
@@ -143,7 +180,7 @@ export const AuthView: React.FC = () => {
           </div>
         </section>
 
-        <section id="access" className="mx-auto grid max-w-7xl gap-10 px-4 py-16 sm:px-6 sm:py-20 lg:grid-cols-[minmax(0,1fr)_minmax(20rem,.72fr)] lg:items-start lg:gap-16">
+        <section id="access" data-reveal className="mx-auto grid max-w-7xl gap-10 px-4 py-16 sm:px-6 sm:py-20 lg:grid-cols-[minmax(0,1fr)_minmax(20rem,.72fr)] lg:items-start lg:gap-16">
           <div className="max-w-2xl">
             <p className="alc-label">03 · access</p>
             <h2 className="mt-3 text-3xl font-semibold tracking-[-0.035em] sm:text-4xl">Continue your enrolled program.</h2>

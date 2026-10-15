@@ -1,4 +1,4 @@
-/* Hallmark · macrostructure: Instrument Panel + Workbench · theme: Lumen Day + Night Foundry · audience: enrolled language learners · use: explore + sign in · tone: technical-editorial · motion: staged reveal + workflow signal + tactile controls · anchor hue: indigo 268 */
+/* Hallmark · macrostructure: Instrument Panel + Workbench · theme: Lumen Day + Night Foundry · audience: enrolled language learners · use: explore + sign in · tone: technical-editorial · motion: post-paint reveal + staggered meter + viewport reveal · anchor hue: indigo 268 */
 /* Hallmark · pre-emit critique: P5 H5 E5 S5 R5 V5 · contrast: pass (40–41) · nav: N1b + N3 · footer: Ft2 · slop: pass (42–45) · honest: pass (46) · chrome: pass (47) · tokens: pass (48) · responsive: pass (49) · icons: pass (30) · mobile: pass (34, 49, 50–57) */
 @import url("https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&family=Instrument+Serif&family=JetBrains+Mono:wght@400;500&display=swap");
 @import "../tokens.css";
@@ -257,14 +257,19 @@
       var(--color-paper);
   }
 
-  .lumen-hero > div > div:first-child > * {
-    animation: lumen-reveal calc(var(--dur-reveal) + 100ms) var(--ease-out) backwards;
+  [data-motion="waiting"] .lumen-hero > div > div:first-child > * {
+    opacity: 0;
+    transform: translateY(1.25rem);
   }
 
-  .lumen-hero > div > div:first-child > :nth-child(1) { animation-delay: 40ms; }
-  .lumen-hero > div > div:first-child > :nth-child(2) { animation-delay: 100ms; }
-  .lumen-hero > div > div:first-child > :nth-child(3) { animation-delay: 160ms; }
-  .lumen-hero > div > div:first-child > :nth-child(4) { animation-delay: 220ms; }
+  [data-motion="ready"] .lumen-hero > div > div:first-child > * {
+    animation: lumen-reveal 500ms var(--ease-out) both;
+  }
+
+  [data-motion="ready"] .lumen-hero > div > div:first-child > :nth-child(1) { animation-delay: 80ms; }
+  [data-motion="ready"] .lumen-hero > div > div:first-child > :nth-child(2) { animation-delay: 160ms; }
+  [data-motion="ready"] .lumen-hero > div > div:first-child > :nth-child(3) { animation-delay: 240ms; }
+  [data-motion="ready"] .lumen-hero > div > div:first-child > :nth-child(4) { animation-delay: 320ms; }
 
   .lumen-title {
     font-family: var(--font-display);
@@ -298,7 +303,11 @@
     background: var(--color-accent-2);
     content: "";
     transform-origin: left;
-    animation: lumen-underline var(--dur-reveal) var(--ease-out) 450ms backwards;
+  }
+
+  [data-motion="waiting"] .lumen-title em::after { transform: scaleX(0); }
+  [data-motion="ready"] .lumen-title em::after {
+    animation: lumen-underline 500ms var(--ease-out) 420ms both;
   }
 
   .lumen-apparatus {
@@ -306,7 +315,15 @@
     width: min(100%, 25rem);
     min-height: 22rem;
     margin-inline: auto;
-    animation: lumen-reveal calc(var(--dur-reveal) + 100ms) var(--ease-out) 140ms backwards;
+  }
+
+  [data-motion="waiting"] .lumen-apparatus {
+    opacity: 0;
+    transform: translateY(1.5rem) scale(0.96);
+  }
+
+  [data-motion="ready"] .lumen-apparatus {
+    animation: lumen-apparatus-enter 500ms var(--ease-out) 180ms both;
   }
 
   .lumen-prism {
@@ -330,7 +347,6 @@
     background: var(--color-accent);
     box-shadow: 0 0 1.25rem var(--color-glow);
     transform-origin: right center;
-    animation: lumen-reveal var(--dur-reveal) var(--ease-out) both;
   }
 
   .lumen-prism::before,
@@ -426,13 +442,39 @@
     background: var(--color-accent);
     opacity: 0.48;
     transform-origin: bottom;
-    animation: lumen-meter-rise calc(var(--dur-reveal) + 100ms) var(--ease-out) 260ms backwards;
+  }
+
+  [data-motion="waiting"] .lumen-meter__bars span {
+    opacity: 0.08;
+    transform: scaleY(0.05);
+  }
+
+  [data-motion="ready"] .lumen-meter__bars span {
+    animation: lumen-meter-rise 500ms var(--ease-out) calc(260ms + var(--bar-delay)) both;
+  }
+
+  [data-reveal] {
+    opacity: 0;
+    transform: translateY(2rem);
+    transition:
+      opacity 500ms var(--ease-out),
+      transform 500ms var(--ease-out);
+  }
+
+  [data-reveal="visible"] {
+    opacity: 1;
+    transform: translateY(0);
   }
 }
 
 @keyframes lumen-reveal {
-  from { opacity: 0; transform: translateY(0.75rem); }
+  from { opacity: 0; transform: translateY(1.25rem); }
   to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes lumen-apparatus-enter {
+  from { opacity: 0; transform: translateY(1.5rem) scale(0.96); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
 }
 
 @keyframes lumen-underline {
@@ -472,6 +514,12 @@
     gap: var(--space-2xs);
   }
   .lumen-meter__label:last-child { text-align: right; }
+
+  [data-reveal] {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -486,8 +534,11 @@
 
   .lumen-hero > div > div:first-child > *,
   .lumen-apparatus,
-  .lumen-meter__bars span {
+  .lumen-meter__bars span,
+  [data-reveal] {
+    animation: none !important;
     opacity: 1;
     transform: none;
+    transition: none !important;
   }
 }

@@ -3,6 +3,15 @@
   "entries": [
     {
       "date": "2026-10-15",
+      "route": "public",
+      "genre": "lumen-foundry",
+      "macrostructure": "Instrument Panel",
+      "theme": "Lumen 19 / Day + Night Foundry",
+      "enrichment": "post-paint hero + staggered meter + viewport reveals",
+      "brief": "Make the requested motion clearly perceptible instead of completing during first paint"
+    },
+    {
+      "date": "2026-10-15",
       "route": "public + app",
       "genre": "lumen-foundry",
       "macrostructure": "Instrument Panel + Workbench",

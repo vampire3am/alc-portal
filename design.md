@@ -52,8 +52,9 @@ Four-point named scale in `tokens.css`. Use hairline rules, 8px inputs, and 12px
 
 ## Motion
 
-- Hero copy and apparatus assemble once in a 420ms stagger capped at 220ms of delay.
-- The learning-path meter rises once as a functional workflow readout; no decorative motion loops.
+- Hero copy and apparatus animate only after two painted frames, preventing the entrance from completing before the page becomes visible.
+- The learning-path meter rises in a clearly staggered 48-bar wave as a functional workflow readout; no decorative motion loops.
+- Programs, workspace, and access reveal once through IntersectionObserver on viewports wider than 40rem.
 - Buttons use a one-pixel hover lift and pressed state; fields transition only surface and border colour.
 - Interaction motion is limited to opacity, transform, and border/color state.
 - Reduced motion removes spatial reveals and resolves all elements immediately.
