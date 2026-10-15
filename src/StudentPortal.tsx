@@ -12,6 +12,7 @@ import {
 } from 'lucide-react';
 import { GermanPortalWorkspace } from './GermanPortalWorkspace';
 import { IeltsPortalWorkspace } from './IeltsPortalWorkspace';
+import { ThemeToggle } from './ThemeToggle';
 import type { ProgramConfig, UserAccount, ViewTab } from './types';
 
 interface StudentPortalProps {
@@ -60,20 +61,23 @@ export const StudentPortal: React.FC<StudentPortalProps> = ({
             </p>
           </div>
         </div>
-        <button
-          type="button"
-          onClick={() => onSelectTab('profile')}
-          className="flex min-h-11 items-center gap-3 rounded-[var(--radius-control)] px-2 text-left hover:bg-[var(--color-surface)]"
-          aria-label={`Open profile for ${user.fullName}`}
-        >
-          <span className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-[var(--color-navy)] text-sm font-bold text-white">
-            {user.fullName.charAt(0)}
-          </span>
-          <span className="hidden sm:block">
-            <span className="block text-sm font-semibold text-[var(--color-ink)]">{user.fullName}</span>
-            <span className="block text-xs text-[var(--color-muted)]">Student</span>
-          </span>
-        </button>
+        <div className="flex items-center gap-2">
+          <ThemeToggle />
+          <button
+            type="button"
+            onClick={() => onSelectTab('profile')}
+            className="flex min-h-11 items-center gap-3 rounded-[var(--radius-control)] px-2 text-left hover:bg-[var(--color-surface)]"
+            aria-label={`Open profile for ${user.fullName}`}
+          >
+            <span className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-[var(--color-navy)] text-sm font-bold text-white">
+              {user.fullName.charAt(0)}
+            </span>
+            <span className="hidden sm:block">
+              <span className="block text-sm font-semibold text-[var(--color-ink)]">{user.fullName}</span>
+              <span className="block text-xs text-[var(--color-muted)]">Student</span>
+            </span>
+          </button>
+        </div>
       </div>
     </header>
   );

@@ -2,6 +2,15 @@
   "version": 1,
   "entries": [
     {
+      "date": "2026-10-15",
+      "route": "public + app",
+      "genre": "lumen-foundry",
+      "macrostructure": "Instrument Panel + Workbench",
+      "theme": "Lumen 19 / Day + Night Foundry",
+      "enrichment": "persistent theme control + editorial lead typography",
+      "brief": "Match Lumen reference typography and retain theme switching"
+    },
+    {
       "date": "2026-10-14",
       "route": "public",
       "genre": "lumen-day-foundry",

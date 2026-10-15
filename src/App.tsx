@@ -15,7 +15,7 @@ const PortalApp: React.FC = () => {
     return (
       <div className="grid min-h-screen place-items-center bg-[var(--color-paper)] px-4">
         <div className="text-center" role="status">
-          <div className="mx-auto grid h-12 w-12 place-items-center rounded-lg bg-[var(--color-ink)] font-display text-sm font-bold text-white">ALC</div>
+          <div className="mx-auto grid h-12 w-12 place-items-center rounded-lg bg-[var(--color-navy)] font-display text-sm font-bold text-white">ALC</div>
           <p className="mt-4 text-sm font-medium text-[var(--color-muted)]">Loading your workspace…</p>
         </div>
       </div>

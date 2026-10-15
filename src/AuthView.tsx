@@ -8,6 +8,7 @@ import {
   Target,
 } from 'lucide-react';
 import { useAuth } from './AuthContext';
+import { ThemeToggle } from './ThemeToggle';
 
 export const AuthView: React.FC = () => {
   const { login } = useAuth();
@@ -32,15 +33,18 @@ export const AuthView: React.FC = () => {
       <header className="sticky top-0 z-30 border-b border-[var(--color-rule)] bg-[var(--color-paper)]">
         <div className="mx-auto flex min-h-16 max-w-7xl items-center justify-between gap-4 px-4 sm:px-6">
           <a href="#top" className="flex min-w-0 items-center gap-3" aria-label="AECS Learning Center home">
-            <span className="grid h-10 w-10 shrink-0 place-items-center rounded-lg bg-[var(--color-ink)] font-display text-sm font-bold text-white">ALC</span>
+            <span className="grid h-10 w-10 shrink-0 place-items-center rounded-lg bg-[var(--color-navy)] font-display text-sm font-bold text-white">ALC</span>
             <span className="min-w-0">
               <span className="block whitespace-nowrap font-display text-sm font-semibold tracking-tight sm:text-base">AECS Learning Center</span>
               <span className="hidden text-xs text-[var(--color-muted)] sm:block">Language test preparation</span>
             </span>
           </a>
-          <a href="#access" className="alc-button-primary px-3 sm:px-4">
-            Sign in <ArrowRight className="h-4 w-4" aria-hidden="true" />
-          </a>
+          <div className="flex items-center gap-2">
+            <ThemeToggle />
+            <a href="#access" className="alc-button-primary px-3 sm:px-4">
+              Sign in <ArrowRight className="h-4 w-4" aria-hidden="true" />
+            </a>
+          </div>
         </div>
       </header>
 
@@ -49,10 +53,10 @@ export const AuthView: React.FC = () => {
           <div className="mx-auto grid max-w-7xl gap-10 px-4 pb-16 pt-12 sm:px-6 sm:pb-28 sm:pt-20 lg:grid-cols-[minmax(0,1.15fr)_minmax(22rem,.85fr)] lg:items-center lg:gap-16">
             <div>
               <p className="alc-label">00 · learning system</p>
-              <h1 className="lumen-title mt-5 max-w-[14ch] leading-[.96] tracking-[-.05em]">
+              <h1 className="lumen-title mt-5 max-w-[14ch]">
                 <em>Prepare</em> with a plan that fits your exam.
               </h1>
-              <p className="mt-6 max-w-2xl text-base leading-7 text-[var(--color-ink-2)] sm:text-lg">
+              <p className="lumen-lede mt-6">
                 AECS brings lessons, targeted practice, mock-test workflows, and progress tracking into one focused workspace for every enrolled student.
               </p>
               <div className="mt-8 flex flex-wrap gap-3">
@@ -203,7 +207,7 @@ export const AuthView: React.FC = () => {
         </section>
       </main>
 
-      <footer className="border-t border-[var(--color-rule)] bg-[var(--color-ink)] text-white">
+      <footer className="border-t border-[var(--color-rule)] bg-[var(--color-navy)] text-white">
         <div className="mx-auto flex max-w-7xl flex-col gap-4 px-4 py-8 sm:flex-row sm:items-center sm:justify-between sm:px-6">
           <div><p className="font-display font-semibold">AECS Learning Center</p><p className="mt-1 text-sm text-white/65">Language test preparation</p></div>
           <p className="text-sm text-white/65">IELTS · PTE · DET · German CEFR</p>

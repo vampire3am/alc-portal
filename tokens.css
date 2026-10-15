@@ -7,7 +7,7 @@
   --color-muted: oklch(45% 0.018 265);
   --color-rule: oklch(82% 0.02 265);
   --color-line: var(--color-rule);
-  --color-navy: var(--color-ink);
+  --color-navy: oklch(18% 0.014 265);
   --color-accent: oklch(46% 0.24 268);
   --color-accent-hover: oklch(40% 0.22 268);
   --color-accent-2: oklch(58% 0.19 18);
@@ -57,4 +57,28 @@
   --radius-panel: var(--radius-card);
   --radius-pill: 999px;
   --rule-thin: 1px;
+}
+
+:root[data-theme="night"] {
+  --color-paper: oklch(10% 0.014 265);
+  --color-paper-2: oklch(13% 0.016 265);
+  --color-surface: oklch(16% 0.018 265);
+  --color-ink: oklch(96% 0.008 265);
+  --color-ink-2: oklch(80% 0.012 265);
+  --color-muted: oklch(69% 0.016 265);
+  --color-rule: oklch(29% 0.024 265);
+  --color-line: var(--color-rule);
+  --color-navy: oklch(7% 0.012 265);
+  --color-accent: oklch(72% 0.18 268);
+  --color-accent-hover: oklch(78% 0.15 268);
+  --color-accent-2: oklch(73% 0.17 42);
+  --color-accent-ink: oklch(10% 0.014 265);
+  --color-focus: oklch(78% 0.16 268);
+  --color-glow: oklch(73% 0.17 42 / 0.32);
+  --color-paper-emit: oklch(73% 0.17 42 / 0.045);
+  --color-spectrum-mid: oklch(72% 0.15 315);
+  --rule-blueprint: oklch(96% 0.008 265 / 0.055);
+  --color-success: oklch(72% 0.13 153);
+  --color-warning: oklch(76% 0.14 72);
+  --color-danger: oklch(70% 0.18 28);
 }

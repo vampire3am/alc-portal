@@ -59,7 +59,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
   };
 
   const content = (
-    <div className="flex h-full w-64 flex-col border-r border-white/10 bg-[var(--color-ink)] text-white">
+    <div className="flex h-full w-64 flex-col border-r border-white/10 bg-[var(--color-navy)] text-white">
       <div className="flex min-h-16 items-center justify-between border-b border-white/10 px-4">
         <div className="flex items-center gap-3">
           <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-[var(--color-accent)] font-display text-sm font-bold">
@@ -102,7 +102,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
                   onClick={() => choose(item.id)}
                   aria-current={active ? 'page' : undefined}
                   className={`flex min-h-11 w-full items-center gap-3 rounded-lg px-3 text-sm font-medium transition-[background-color,color] duration-150 ${
-                    active ? 'bg-white text-[var(--color-ink)]' : 'text-white/72 hover:bg-white/8 hover:text-white'
+                    active ? 'bg-[var(--color-surface)] text-[var(--color-ink)]' : 'text-white/72 hover:bg-white/8 hover:text-white'
                   }`}
                 >
                   <span className={active ? 'text-[var(--color-accent)]' : 'text-white/55'} aria-hidden="true">
